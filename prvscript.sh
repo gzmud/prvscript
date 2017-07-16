@@ -1,5 +1,7 @@
 #!/bin/bash
-
+#
+#lede cmd ref  https://lede-project.org/docs/user-guide/imagebuilder
+#
 PRV_SSCONFIG=~/.ss.json
 
 function prv_help ()
@@ -87,10 +89,10 @@ function lede_setimgconfig ()
 
 function lede_makeimg()
 {
-	make image PACKAGES="$ledepkg" FILES=files/
+	make image PACKAGES="$ledepkg"
 }
 
 function lede_pmakeimg()
 {
-	proxychains make image PACKAGES="$ledepkg" FILES=files/
+	proxychains make image PACKAGES="$ledepkg"
 }
