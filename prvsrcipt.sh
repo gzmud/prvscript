@@ -8,7 +8,7 @@ private script
 
 Usage:
 
-wget --cache=off https://raw.github.com/gzmud/prvscript/master/prvscript.sh && chmod +x prvscript.sh 
+wget --cache=off https://raw.githubusercontent.com/gzmud/prvscript/master/prvsrcipt.sh -O prvsrcipt.sh && chmod +x prvsrcipt.sh 
 . prvscript.sh
 EOF
 }
