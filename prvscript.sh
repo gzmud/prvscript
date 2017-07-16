@@ -174,3 +174,12 @@ git clone https://github.com/aa65535/openwrt-dist-luci.git package/openwrt-dist-
 # make package/openwrt-dist-luci/compile V=99
 }
 
+function lede_pmakesdk()
+{
+proxychains make package/shadowsocks-libev/compile V=99
+proxychains make package/chinadns/compile V=99
+proxychains make package/dns-forwarder/compile V=99
+proxychains make package/simple-obfs/compile V=99
+proxychains make package/luci-app-shadowsocks/compile V=99
+proxychains make package/openwrt-dist-luci/compile V=99
+}
