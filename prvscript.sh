@@ -1,4 +1,5 @@
 #!/bin/bash
+#modweb
 PRV_SSCONFIG=~/.ss.json
 
 function prv_help ()
