@@ -42,7 +42,8 @@ function lede_set ()
 {
 ledeimg="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-imagebuilder-brcm2708-bcm2710.Linux-x86_64.tar.xz"
 ledesdk="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-sdk-brcm2708-bcm2710_gcc-5.4.0_musl.Linux-x86_64.tar.xz"
-ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152'
+#ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls'
+ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls ChinaDNS dns-forwarder libsodium libudns luci-app-chinadns luci-app-dns-forwarder luci-app-shadowsocks-without-ipset luci-app-shadowsocks shadowsocks-libev-server shadowsocks-libev'
 }
 
 function lede_pgetimgbuilder ()
@@ -89,12 +90,16 @@ function lede_setimgconfig ()
 
 function lede_makeimg()
 {
-	make image PACKAGES="$ledepkg"
+	#lede_imgcpfile
+	lede_imgcpipk
+	make image PACKAGES="$ledepkg" FILES=files/
 }
 
 function lede_pmakeimg()
 {
-	proxychains make image PACKAGES="$ledepkg"
+	#lede_imgcpfile
+	lede_imgcpipk
+	proxychains make image PACKAGES="$ledepkg" FILES=files/
 }
 function lede_setsdk()
 {
@@ -221,3 +226,74 @@ function lede_clean()
 {
 rm -rf lede-*
 }
+
+function lede_imgcpfile()
+{
+rm -rf files/
+mkdir -p files/root/factoryipk
+ipkbasedir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/base"
+cp $ipkbasedir/libudns*.ipk files/root/factoryipk
+cp $ipkbasedir/shadowsocks-libev*.ipk files/root/factoryipk
+cp $ipkbasedir/luci-app*.ipk files/root/factoryipk
+cp $ipkbasedir/dns-forwarder*.ipk files/root/factoryipk
+cp $ipkbasedir/ChinaDNS_*.ipk files/root/factoryipk
+
+ipkpkgdir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/packages"
+cp $ipkpkgdir/libsodium*.ipk files/root/factoryipk
+
+cat <<EOF > files/root/factoryinit.sh
+#!/bin/bash
+cd /root/factoryipk
+opkg update
+opkg install libudns*.ipk libsodium*.ipk
+opkg install shadowsocks-libev*.ipk luci-app-shadowsocks*.ipk
+opkg install ChinaDNS*.ipk luci-app-chinadns*.ipk
+opkg install dns-forwarder*.ipk luci-app-dns-forwarder*.ipk
+
+wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > /etc/chinadns_chnroute.txt
+
+echo "net.ipv4.tcp_fastopen = 3" >> /etc/sysctl.conf
+sysctl -p
+
+mkdir /etc/dnsmasq.d
+uci get dhcp.@dnsmasq[0].confdir
+uci add_list dhcp.@dnsmasq[0].confdir=/etc/dnsmasq.d
+uci commit dhcp
+opkg install coreutils-base64 ca-certificates ca-bundle curl
+
+function dl_chnlistscrp ()
+{
+# China-List
+curl -L -o generate_dnsmasq_chinalist.sh https://github.com/cokebar/openwrt-scripts/raw/master/generate_dnsmasq_chinalist.sh
+chmod +x generate_dnsmasq_chinalist.sh
+# GfwList
+curl -L -o gfwlist2dnsmasq.sh https://github.com/cokebar/gfwlist2dnsmasq/raw/master/gfwlist2dnsmasq.sh
+chmod +x gfwlist2dnsmasq.sh
+}
+
+function genchnlist ()
+{
+# China-list
+sh generate_dnsmasq_chinalist.sh -d 114.114.114.114 -p 53 -o /etc/dnsmasq.d/accelerated-domains.china.conf
+# GfwList
+sh gfwlist2dnsmasq.sh -d 127.0.0.1 -p 5311 -o /etc/dnsmasq.d/dnsmasq_gfwlist.conf
+# Restart dnsmasq
+/etc/init.d/dnsmasq restart
+}
+EOF
+
+}
+
+function lede_imgcpipk()
+{
+ipkbasedir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/base"
+cp $ipkbasedir/libudns*.ipk packages
+cp $ipkbasedir/shadowsocks-libev*.ipk packages
+cp $ipkbasedir/luci-app*.ipk packages
+cp $ipkbasedir/dns-forwarder*.ipk packages
+cp $ipkbasedir/ChinaDNS_*.ipk packages
+
+ipkpkgdir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/packages"
+cp $ipkpkgdir/libsodium*.ipk packages
+}
+
