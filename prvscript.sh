@@ -112,6 +112,22 @@ lede_getsource
 ./scripts/feeds update -a
 }
 
+function lede_psetsdk()
+{
+
+# cat <<EOF >>feeds.conf.default
+# src-git shadowsocks-libev https://github.com/shadowsocks/openwrt-shadowsocks.git
+# src-git luci-app-shadowsocks https://github.com/shadowsocks/luci-app-shadowsocks.git
+# src-git ChinaDNS https://github.com/aa65535/openwrt-chinadns.git
+# src-git openwrt-dist-luci https://github.com/aa65535/openwrt-dist-luci.git
+# src-git DNS-forwarder https://github.com/aa65535/openwrt-dns-forwarder.git
+# src-git simple-obfs https://github.com/aa65535/openwrt-simple-obfs.git
+# EOF
+
+lede_getsource
+proxychains ./scripts/feeds update -a
+}
+
 function lede_getsource()
 {
 #lede_getss
