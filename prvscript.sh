@@ -199,3 +199,25 @@ proxychains make package/simple-obfs/compile V=99
 proxychains make package/luci-app-shadowsocks/compile V=99
 proxychains make package/openwrt-dist-luci/compile V=99
 }
+
+function lede_resetsdk()
+{
+rm -rf lede-sdk
+tar xJf lede-sdk*.xz
+rm -rf lede-sdk
+mv `find  . -maxdepth 1 -name 'lede-sdk-*' -type d` lede-sdk
+}
+
+function lede_resetimg()
+{
+rm -rf lede-img
+tar xJf lede-imagebuilder*.xz
+rm -rf lede-img
+mv `find  . -maxdepth 1 -name 'lede-imagebuilder*' -type d` lede-img
+
+}
+
+function lede_clean()
+{
+rm -rf lede-*
+}
