@@ -44,6 +44,7 @@ ledeimg="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/l
 ledesdk="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-sdk-brcm2708-bcm2710_gcc-5.4.0_musl.Linux-x86_64.tar.xz"
 #ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls'
 ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls ChinaDNS dns-forwarder libsodium libudns luci-app-chinadns luci-app-dns-forwarder luci-app-shadowsocks-without-ipset luci-app-shadowsocks shadowsocks-libev-server shadowsocks-libev'
+ledesdk32="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2708/lede-sdk-brcm2708-bcm2708_gcc-5.4.0_musl_eabi.Linux-x86_64.tar.xz"
 }
 
 function lede_pgetimgbuilder ()
@@ -297,6 +298,7 @@ ipkpkgdir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/packages"
 cp $ipkpkgdir/libsodium*.ipk packages
 }
 
+
 functin lede_sdkmakertl8812au()
 {
 # it neef fix include arm
@@ -310,3 +312,25 @@ functin lede_sdkmakertl8812au()
 # modinfo  ./wl.ko | grep depend   ÕÒÄ£¿éµÄÒÀÀµ£¬
 # modprobe ÕÒ³öµÄÒÀÀµ
 # insmod ./wl.ko
+
+function lede_sdkpatche()
+{
+rm -rf ledesdk32
+rm -rf lede-sdk32
+mkdir ledesdk32
+pushd ledesdk32
+wget $ledesdk32
+tar xJf lede-sdk*.xz
+mv `find  . -maxdepth 1 -name 'lede-sdk-*' -type d` ../lede-sdk32
+popd
+cp -r lede-sdk32/build_dir/target-arm_arm1176jzf-s+vfp_musl_eabi/linux-brcm2708_bcm2708/linux-4.9.37/arch/arm/ lede-sdk/build_dir/target-aarch64_cortex-a53+neon-vfpv4_musl/linux-brcm2708_bcm2710/linux-4.9.37/arch/
+}
+
+function lede_makertl8812ua()
+{
+pushd ..
+git clone https://github.com/weedy/lede-rtl8812au-rtl8814au.git
+popd
+cp -r ../lede-rtl8812au-rtl8814au/package/kernel/ package/
+make package/kernel/rtl8812au/compile V=99
+}
