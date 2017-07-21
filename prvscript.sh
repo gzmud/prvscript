@@ -298,15 +298,6 @@ ipkpkgdir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/packages"
 cp $ipkpkgdir/libsodium*.ipk packages
 }
 
-
-functin lede_sdkmakertl8812au()
-{
-# it neef fix include arm
- rm -rf package/kernel/rtl8812au/
- cp -r ../lede-rtl8812au-rtl8814au/package/kernel/rtl8812au/ package/kernel/
- make package/kernel/rtl8812au/compile V=99
-}
-
 # insmod: error inserting 'wl.ko': -1 Unknown symbol in module
 # 看到这段，应该是模块加载依赖的问题
 # modinfo  ./wl.ko | grep depend   找模块的依赖，
