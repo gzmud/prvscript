@@ -320,8 +320,79 @@ cp -r lede-sdk32/build_dir/target-arm_arm1176jzf-s+vfp_musl_eabi/linux-brcm2708_
 function lede_makertl8812ua()
 {
 pushd ..
-git clone https://github.com/weedy/lede-rtl8812au-rtl8814au.git
+#git clone https://github.com/weedy/lede-rtl8812au-rtl8814au.git
+git clone https://github.com/dl12345/rtl8812au.git
 popd
-cp -r ../lede-rtl8812au-rtl8814au/package/kernel/ package/
+#cp -r ../lede-rtl8812au-rtl8814au/package/kernel/ package/
+cp -r ../rtl8812au/ package/
 make package/kernel/rtl8812au/compile V=99
+}
+
+function lede_remakertl8812ua()
+{
+rm -rf package/kernel/rtl8812au
+#cp -r ../lede-rtl8812au-rtl8814au/package/kernel/ package/
+cp -r ../rtl8812au package/kernel/
+make package/kernel/rtl8812au/compile V=99
+}
+
+
+function lede_diffMK()
+{
+#diff of rtl8812AU Makefile
+cat <<EOF
+--- a/Makefile
++++ b/Makefile
+@@ -85,8 +85,8 @@ CONFIG_AP_WOWLAN = n
+ ######### Notify SDIO Host Keep Power During Syspend ##########
+ CONFIG_RTW_SDIO_PM_KEEP_POWER = y
+ ###################### Platform Related #######################
+-CONFIG_PLATFORM_I386_PC = y
+-CONFIG_PLATFORM_ARM_RPI = n
++CONFIG_PLATFORM_I386_PC = n
++CONFIG_PLATFORM_ARM_RPI = y
+ CONFIG_PLATFORM_ANDROID_X86 = n
+ CONFIG_PLATFORM_ANDROID_INTEL_X86 = n
+ CONFIG_PLATFORM_JB_X86 = n
+@@ -136,7 +136,7 @@ CONFIG_PLATFORM_MOZART = n
+ CONFIG_PLATFORM_RTK119X = n
+ CONFIG_PLATFORM_NOVATEK_NT72668 = n
+ CONFIG_PLATFORM_HISILICON = n
+-CONFIG_PLATFORM_ARM64 = n
++CONFIG_PLATFORM_ARM64 = y
+ ###############################################################
+ 
+ CONFIG_DRVEXT_MODULE = n
+EOF
+
+#diff of ledepkg Makefile
+cat <<EOF
+--- a/package/kernel/rtl8812au/Makefile
++++ b/package/kernel/rtl8812au/Makefile
+@@ -11,12 +11,12 @@ include $(INCLUDE_DIR)/kernel.mk
+ include $(INCLUDE_DIR)/kernel-defaults.mk
+ 
+ PKG_NAME:=RTL8812A
+-PKG_VERSION=2016-10-20-$(PKG_SOURCE_VERSION)
++PKG_VERSION=2016-10-26-$(PKG_SOURCE_VERSION)
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_URL:=https://github.com/weedy/rtl8812AU.git
+-PKG_SOURCE_VERSION:=a422338714853794b7cfb8ed7e2fcec355b4399d
++PKG_SOURCE_URL:=https://github.com/diederikdehaas/rtl8812AU.git
++PKG_SOURCE_VERSION:=845607043e532c26a196e96f837a449952a36c87
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_SOURCE_VERSION)
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.gz
+ 
+@@ -36,7 +36,7 @@ endef
+ 
+ define Build/Compile
+        $(MAKE) $(KERNEL_MAKEOPTS) M=$(PKG_BUILD_DIR) \
+-               USER_EXTRA_CFLAGS="-D_LINUX_BYTEORDER_SWAB_H -DCONFIG_BIG_ENDIAN -DCONFIG_IOCTL_CFG80211 -DRTW_USE_CFG80211_STA_EVENT" \
++               USER_EXTRA_CFLAGS="-D_LINUX_BYTEORDER_SWAB_H" \
+                CONFIG_RTL8812A=y CONFIG_RTL8821A=y CONFIG_RTL8812AU_8821AU=m \
+                modules
+ endef
+EOF
 }
