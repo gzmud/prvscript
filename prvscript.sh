@@ -478,7 +478,7 @@ if [ `id -u` -eq 0 ];then
     echo "root ! go on"  
 else  
     echo "not root ! exit"  
-	exit -1
+	return -1
 fi
 apt-get remove docker docker-engine docker.io
 apt-get update
