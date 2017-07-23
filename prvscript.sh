@@ -472,7 +472,7 @@ make menuconfig
 make defconfig
 }
 
-funciton db_instdocker()
+function db_instdocker()
 {
 if [ `id -u` -eq 0 ];then  
     echo "root ! go on"  
