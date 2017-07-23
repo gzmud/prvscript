@@ -45,6 +45,7 @@ ledesdk="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/l
 #ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls'
 ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls ChinaDNS dns-forwarder libsodium libudns luci-app-chinadns luci-app-dns-forwarder luci-app-shadowsocks-without-ipset luci-app-shadowsocks shadowsocks-libev-server shadowsocks-libev'
 ledesdk32="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2708/lede-sdk-brcm2708-bcm2708_gcc-5.4.0_musl_eabi.Linux-x86_64.tar.xz"
+lededir=$(readlink -f .) 
 }
 
 function lede_pgetimgbuilder ()
@@ -223,11 +224,6 @@ mv `find  . -maxdepth 1 -name 'lede-imagebuilder*' -type d` lede-img
 
 }
 
-function lede_clean()
-{
-rm -rf lede-*
-}
-
 function lede_imgcpfile()
 {
 rm -rf files/
@@ -336,6 +332,15 @@ cp -r ../rtl8812au package/kernel/
 make package/kernel/rtl8812au/compile V=99
 }
 
+function lede_get8812au()
+{
+pushd ..
+#git clone https://github.com/weedy/lede-rtl8812au-rtl8814au.git
+git clone https://github.com/dl12345/rtl8812au.git
+popd
+#cp -r ../lede-rtl8812au-rtl8814au/package/kernel/ package/
+cp -r ../rtl8812au/ package/
+}
 
 function lede_diffMK()
 {
@@ -395,4 +400,74 @@ cat <<EOF
                 modules
  endef
 EOF
+}
+
+function lede_prepare()
+{
+lede_dl
+}
+
+function lede_8812set()
+{
+lede_gitdl12345="https://github.com/dl12345/rtl8812au.git"
+gtidl12345=$(readlink -f ./dl12345) 
+}
+
+function lede_dl()
+{
+lede_set
+wget $ledeimg
+wget $ledesdk
+mkdir ledesdk32
+pushd ledesdk32
+wget $ledesdk32
+popd
+lede_8812set
+git clone $lede_gitdl12345 $gtidl12345
+}
+
+function lede_unpack()
+{
+pushd $lededir
+tar xJf lede-sdk*.xz
+rm -rf lede-sdk
+mv `find  . -maxdepth 1 -name 'lede-sdk-*' -type d` lede-sdk
+
+tar xJf lede-imagebuilder*.xz
+rm -rf lede-img
+mv `find  . -maxdepth 1 -name 'lede-imagebuilder*' -type d` lede-img
+
+rm -rf lede-sdk32
+pushd ledesdk32
+tar xJf lede-sdk*.xz
+mv `find  . -maxdepth 1 -name 'lede-sdk-*' -type d` ../lede-sdk32
+popd
+cp -r lede-sdk32/build_dir/target-arm_arm1176jzf-s+vfp_musl_eabi/linux-brcm2708_bcm2708/linux-4.9.37/arch/arm/ lede-sdk/build_dir/target-aarch64_cortex-a53+neon-vfpv4_musl/linux-brcm2708_bcm2710/linux-4.9.37/arch/
+pushd lede-sdk
+./scripts/feeds update -a
+#./scripts/feeds install -a
+#mkdir -p staging_dir/toolchain-aarch64_cortex-a53+neon-vfpv4_gcc-5.4.0_musl/usr/include/mac80211/
+#cp build_dir/target-aarch64_cortex-a53+neon-vfpv4_musl/linux-brcm2708_bcm2710/linux-4.9.37/Module.symvers staging_dir/toolchain-aarch64_cortex-a53+neon-vfpv4_gcc-5.4.0_musl/usr/include/mac80211/
+popd
+popd
+}
+
+function lede_clean()
+{
+ rm lede-sdk lede-sdk32 -rf
+}
+
+function lede_insbuildsys()
+{
+apt-get install build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python
+git clone https://git.lede-project.org/source.git
+}
+
+function lede_bldprp()
+{
+git pull
+./scripts/feeds update -a
+./scripts/feeds install -a
+make menuconfig
+make defconfig
 }
