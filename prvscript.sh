@@ -411,6 +411,8 @@ function lede_8812set()
 {
 lede_gitdl12345="https://github.com/dl12345/rtl8812au.git"
 gtidl12345=$(readlink -f ./dl12345) 
+lede_gitweedy="https://github.com/weedy/lede-rtl8812au-rtl8814au.git"
+gitweedy="weedy"
 }
 
 function lede_dl()
@@ -424,6 +426,7 @@ wget $ledesdk32
 popd
 lede_8812set
 git clone $lede_gitdl12345 $gtidl12345
+git clone $lede_gitweedy $gitweedy
 }
 
 function lede_unpack()
@@ -444,10 +447,11 @@ mv `find  . -maxdepth 1 -name 'lede-sdk-*' -type d` ../lede-sdk32
 popd
 cp -r lede-sdk32/build_dir/target-arm_arm1176jzf-s+vfp_musl_eabi/linux-brcm2708_bcm2708/linux-4.9.37/arch/arm/ lede-sdk/build_dir/target-aarch64_cortex-a53+neon-vfpv4_musl/linux-brcm2708_bcm2710/linux-4.9.37/arch/
 pushd lede-sdk
-./scripts/feeds update -a
+#./scripts/feeds update -a
 #./scripts/feeds install -a
 #mkdir -p staging_dir/toolchain-aarch64_cortex-a53+neon-vfpv4_gcc-5.4.0_musl/usr/include/mac80211/
 #cp build_dir/target-aarch64_cortex-a53+neon-vfpv4_musl/linux-brcm2708_bcm2710/linux-4.9.37/Module.symvers staging_dir/toolchain-aarch64_cortex-a53+neon-vfpv4_gcc-5.4.0_musl/usr/include/mac80211/
+cp ../weedy/package/kernel/rtl8812au/ package/kernel/ -r
 popd
 popd
 }
