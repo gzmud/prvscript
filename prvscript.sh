@@ -207,6 +207,33 @@ proxychains make package/luci-app-shadowsocks/compile V=99
 proxychains make package/openwrt-dist-luci/compile V=99
 }
 
+function lede_makesdk()
+{
+make package/shadowsocks-libev/compile -j4
+make package/chinadns/compile -j4
+make package/dns-forwarder/compile -j4
+make package/simple-obfs/compile -j4
+make package/luci-app-shadowsocks/compile -j4
+make package/openwrt-dist-luci/compile -j4
+}
+
+function lede_buildmyimg()
+{
+mkdir t
+pushd t
+lede_dl
+lede_unpack
+pushd lede-sdk
+lede_setsdk
+lede_makesdk
+popd
+pushd lede-img
+lede_setimgconfig
+lede_makeimg
+popd
+popd
+}
+
 function lede_resetsdk()
 {
 rm -rf lede-sdk
