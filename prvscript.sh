@@ -92,14 +92,14 @@ function lede_setimgconfig ()
 
 function lede_makeimg()
 {
-	#lede_imgcpfile
+	lede_imgcpfile
 	lede_imgcpipk
 	make image PACKAGES="$ledepkg" FILES=files/
 }
 
 function lede_pmakeimg()
 {
-	#lede_imgcpfile
+	lede_imgcpfile
 	lede_imgcpipk
 	proxychains make image PACKAGES="$ledepkg" FILES=files/
 }
@@ -266,13 +266,17 @@ ipkpkgdir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/packages"
 cp $ipkpkgdir/libsodium*.ipk files/root/factoryipk
 
 cat <<EOF > files/root/factoryinit.sh
-#!/bin/bash
+#!/bin/sh
 cd /root/factoryipk
 opkg update
 opkg install libudns*.ipk libsodium*.ipk
 opkg install shadowsocks-libev*.ipk luci-app-shadowsocks*.ipk
 opkg install ChinaDNS*.ipk luci-app-chinadns*.ipk
 opkg install dns-forwarder*.ipk luci-app-dns-forwarder*.ipk
+opkg install coreutils-base64 ca-certificates ca-bundle curl
+
+chmod +x /root/ss_watchdog.sh
+chmod +x /root/update_ignore_list.sh
 
 wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > /etc/chinadns_chnroute.txt
 
@@ -283,7 +287,7 @@ mkdir /etc/dnsmasq.d
 uci get dhcp.@dnsmasq[0].confdir
 uci add_list dhcp.@dnsmasq[0].confdir=/etc/dnsmasq.d
 uci commit dhcp
-opkg install coreutils-base64 ca-certificates ca-bundle curl
+
 
 function dl_chnlistscrp ()
 {
@@ -304,8 +308,57 @@ sh gfwlist2dnsmasq.sh -d 127.0.0.1 -p 5311 -o /etc/dnsmasq.d/dnsmasq_gfwlist.con
 # Restart dnsmasq
 /etc/init.d/dnsmasq restart
 }
+
 EOF
 
+cat <<EOF > files/root/ss_watchdog.sh
+#!/bin/sh
+ 
+LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
+wget --spider --quiet --tries=1 --timeout=10 https://www.facebook.com/
+if [ "$?" == "0" ]; then
+	echo '['$LOGTIME'] No Problem.'
+	exit 0
+else
+	wget --spider --quiet --tries=1 --timeout=10 https://www.baidu.com/
+	if [ "$?" == "0" ]; then
+		echo '['$LOGTIME'] Problem decteted, restarting shadowsocks.'
+		/etc/init.d/shadowsocks restart >/dev/null
+	else
+		echo '['$LOGTIME'] Network Problem. Do nothing.'
+	fi
+fi
+EOF
+
+cat <<EOF > files/root/update_ignore_list.sh
+#!/bin/sh
+
+set -e -o pipefail
+
+wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | \
+    awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > \
+    /tmp/chinadns_chnroute.txt
+
+mv /tmp/chinadns_chnroute.txt /etc/
+
+if pidof ss-redir>/dev/null; then
+    /etc/init.d/shadowsocks restart
+fi
+EOF
+
+cat <<EOF > files/root/crontab
+# 文件格式说明
+#  ——分钟 (0 - 59)
+# |  ——小时 (0 - 23)
+# | |  ——日   (1 - 31)
+# | | |  ——月   (1 - 12)
+# | | | |  ——星期 (0 - 7)（星期日=0或7）
+# | | | | |
+# * * * * * 被执行的命令
+*/10 * * * * /root/ss_watchdog.sh >> /var/log/ss_watchdog.log 2>&1
+0 1 * * 7 echo "" > /var/log/ss_watchdog.log
+30    4     *     *     *     /root/update_ignore_list.sh>/dev/null 2>&1
+EOF
 }
 
 function lede_imgcpipk()
