@@ -65,7 +65,6 @@ lede_set8812
 echo git clone $lede_gitdl12345 $gtidl12345
 echo git clone $lede_gitweedy $gitweedy
 }
-}
 
 function lede_unpack()
 {
