@@ -46,9 +46,9 @@ popd
 
 function lede_dl()
 {
-test -e lede-img.tar.xz && wget $ledeimg -O lede-img.tar.xz
-test -e lede-sdk.tar.xz &&wget $ledesdk -O lede-sdk.tar.xz
-test -e lede-sdk32.tar.xz &&wget $ledesdk32 -O lede-sdk32.tar.xz
+test -e lede-img.tar.xz || wget $ledeimg -O lede-img.tar.xz
+test -e lede-sdk.tar.xz || wget $ledesdk -O lede-sdk.tar.xz
+test -e lede-sdk32.tar.xz || wget $ledesdk32 -O lede-sdk32.tar.xz
 }
 
 function lede_set8812()
