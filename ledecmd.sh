@@ -68,14 +68,17 @@ echo git clone $lede_gitweedy $gitweedy
 
 function lede_unpack()
 {
-rm -rf lede-sdk
 tar xJf lede-sdk.tar.xz
+rm -rf lede-sdk
+mv `find  . -maxdepth 1 -name 'lede-sdk-*' -type d` lede-sdk
 
-rm -rf lede-img
 tar xJf lede-img.tar.xz
+rm -rf lede-img
+mv `find  . -maxdepth 1 -name 'lede-imagebuilder*' -type d` lede-img
 
 rm -rf lede-sdk32
 tar xJf lede-sdk32.tar.xz
+mv `find  . -maxdepth 1 -name 'lede-sdk-*' -type d` ../lede-sdk32
 }
 
 function lede_setsdk()
