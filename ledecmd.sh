@@ -177,12 +177,12 @@ function lede_setimgconfig ()
 	sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=100/' .config
 	sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE\=256/CONFIG_TARGET_ROOTFS_PARTSIZE\=768/' .config
 	./scripts/feeds update -a
-}
+8}
 
 function lede_makeimg()
 {
 	lede_imgcpfile
-	lede_imgcpipk
+	lede_genscript
 	make image PACKAGES="$ledepkg" FILES=files/
 }
 
@@ -193,13 +193,19 @@ mkdir -p files/root/factoryipk
 ipkbasedir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/base"
 cp $ipkbasedir/libudns*.ipk files/root/factoryipk
 cp $ipkbasedir/shadowsocks-libev*.ipk files/root/factoryipk
-cp $ipkbasedir/luci-app*.ipk files/root/factoryipk
+cp $ipkbasedir/luci-app-shadowsocks_*.ipk files/root/factoryipk
 cp $ipkbasedir/dns-forwarder*.ipk files/root/factoryipk
+cp $ipkbasedir/luci-app-dns-forwarder_*.ipk files/root/factoryipk
 cp $ipkbasedir/ChinaDNS_*.ipk files/root/factoryipk
+cp $ipkbasedir/luci-app-chinadns_*.ipk files/root/factoryipk
 
 ipkpkgdir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/packages"
 cp $ipkpkgdir/libsodium*.ipk files/root/factoryipk
 
+}
+
+function lede_genscript()
+{
 cat <<EOF > files/root/factoryinit.sh
 #!/bin/sh
 cd /root/factoryipk
@@ -294,17 +300,5 @@ cat <<EOF > files/root/crontab
 0 1 * * 7 echo "" > /var/log/ss_watchdog.log
 30    4     *     *     *     /root/update_ignore_list.sh>/dev/null 2>&1
 EOF
-}
 
-function lede_imgcpipk()
-{
-ipkbasedir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/base"
-cp $ipkbasedir/libudns*.ipk packages
-cp $ipkbasedir/shadowsocks-libev*.ipk packages
-cp $ipkbasedir/luci-app*.ipk packages
-cp $ipkbasedir/dns-forwarder*.ipk packages
-cp $ipkbasedir/ChinaDNS_*.ipk packages
-
-ipkpkgdir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/packages"
-cp $ipkpkgdir/libsodium*.ipk packages
 }
