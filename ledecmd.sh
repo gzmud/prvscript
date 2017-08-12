@@ -78,7 +78,7 @@ mv `find  . -maxdepth 1 -name 'lede-imagebuilder*' -type d` lede-img
 
 rm -rf lede-sdk32
 tar xJf lede-sdk32.tar.xz
-mv `find  . -maxdepth 1 -name 'lede-sdk-*' -type d` ../lede-sdk32
+mv `find  . -maxdepth 1 -name 'lede-sdk-*' -type d` lede-sdk32
 }
 
 function lede_setsdk()
