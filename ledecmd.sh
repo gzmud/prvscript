@@ -20,7 +20,7 @@ function lede_set ()
 {
 ledeimg="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-imagebuilder-brcm2708-bcm2710.Linux-x86_64.tar.xz"
 ledesdk="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-sdk-brcm2708-bcm2710_gcc-5.4.0_musl.Linux-x86_64.tar.xz"
-ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls'
+ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls coreutils-base64 ca-certificates ca-bundle curl bind-dig blockd ntfs-3g-utils kmod-usb-hid kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb2 luci-i18n-minidlna-zh-cn luci-i18n-samba-zh-cn luci-i18n-upnp-zh-cn' 
 ledesdk32="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2708/lede-sdk-brcm2708-bcm2708_gcc-5.4.0_musl_eabi.Linux-x86_64.tar.xz"
 lededir=$(readlink -f .) 
 }
@@ -207,48 +207,6 @@ cp $ipkpkgdir/libsodium*.ipk files/root/factoryipk
 function lede_genscript()
 {
 cat <<EOF > files/root/factoryinit.sh
-#!/bin/sh
-cd /root/factoryipk
-opkg update
-opkg install libudns*.ipk libsodium*.ipk
-opkg install shadowsocks-libev*.ipk luci-app-shadowsocks*.ipk
-opkg install ChinaDNS*.ipk luci-app-chinadns*.ipk
-opkg install dns-forwarder*.ipk luci-app-dns-forwarder*.ipk
-opkg install coreutils-base64 ca-certificates ca-bundle curl
-
-chmod +x /root/ss_watchdog.sh
-chmod +x /root/update_ignore_list.sh
-
-wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > /etc/chinadns_chnroute.txt
-
-echo "net.ipv4.tcp_fastopen = 3" >> /etc/sysctl.conf
-sysctl -p
-
-mkdir /etc/dnsmasq.d
-uci get dhcp.@dnsmasq[0].confdir
-uci add_list dhcp.@dnsmasq[0].confdir=/etc/dnsmasq.d
-uci commit dhcp
-
-
-function dl_chnlistscrp ()
-{
-# China-List
-curl -L -o generate_dnsmasq_chinalist.sh https://github.com/cokebar/openwrt-scripts/raw/master/generate_dnsmasq_chinalist.sh
-chmod +x generate_dnsmasq_chinalist.sh
-# GfwList
-curl -L -o gfwlist2dnsmasq.sh https://github.com/cokebar/gfwlist2dnsmasq/raw/master/gfwlist2dnsmasq.sh
-chmod +x gfwlist2dnsmasq.sh
-}
-
-function genchnlist ()
-{
-# China-list
-sh generate_dnsmasq_chinalist.sh -d 114.114.114.114 -p 53 -o /etc/dnsmasq.d/accelerated-domains.china.conf
-# GfwList
-sh gfwlist2dnsmasq.sh -d 127.0.0.1 -p 5311 -o /etc/dnsmasq.d/dnsmasq_gfwlist.conf
-# Restart dnsmasq
-/etc/init.d/dnsmasq restart
-}
 
 EOF
 
