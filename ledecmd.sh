@@ -177,7 +177,7 @@ function lede_setimgconfig ()
 	sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=100/' .config
 	sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE\=256/CONFIG_TARGET_ROOTFS_PARTSIZE\=768/' .config
 	./scripts/feeds update -a
-8}
+}
 
 function lede_makeimg()
 {
