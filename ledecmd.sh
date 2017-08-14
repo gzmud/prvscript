@@ -20,7 +20,7 @@ function lede_set ()
 {
 ledeimg="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-imagebuilder-brcm2708-bcm2710.Linux-x86_64.tar.xz"
 ledesdk="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-sdk-brcm2708-bcm2710_gcc-5.4.0_musl.Linux-x86_64.tar.xz"
-ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls coreutils-base64 ca-certificates ca-bundle curl bind-dig blockd ntfs-3g-utils kmod-usb-hid kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb2 luci-i18n-minidlna-zh-cn luci-i18n-samba-zh-cn luci-i18n-upnp-zh-cn' 
+ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls coreutils-base64 ca-certificates ca-bundle curl bind-dig mount-utils block-mount blockd ntfs-3g-utils minidlna samba36-server miniupnpd kmod-usb-hid kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb2 luci-app-minidlna  luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn' 
 ledesdk32="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2708/lede-sdk-brcm2708-bcm2708_gcc-5.4.0_musl_eabi.Linux-x86_64.tar.xz"
 lededir=$(readlink -f .) 
 }
