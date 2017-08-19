@@ -176,6 +176,8 @@ function lede_setimgconfig ()
 #	CONFIG_TARGET_ROOTFS_PARTSIZE=256
 	sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=100/' .config
 	sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE\=256/CONFIG_TARGET_ROOTFS_PARTSIZE\=768/' .config
+	# CONFIG_TCP_CONG_BBR is not set
+	sed -i 's/# CONFIG_TCP_CONG_BBR is not set/CONFIG_TCP_CONG_BBR=y/' .config
 	./scripts/feeds update -a
 }
 
