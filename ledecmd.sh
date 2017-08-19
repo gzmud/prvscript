@@ -273,6 +273,7 @@ EOF
 function lede_makemyipk()
 {
 myipk='aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn'
+./scripts/feeds update -a
 ./scripts/feeds install $myipk
 
 echo $myipk  | xargs  -n1 echo | grep -v 'luci' | xargs -i make package/feeds/packages/{}/compile -j4
