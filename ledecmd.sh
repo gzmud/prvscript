@@ -201,13 +201,13 @@ cp $ipkbasedir/luci-app-chinadns_*.ipk files/root/factoryipk
 
 ipkpkgdir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/packages"
 cp $ipkpkgdir/libsodium*.ipk files/root/factoryipk
-cp $ipkbasedir/aria2*.ipk files/root/factoryipk
-cp $ipkbasedir/webui-aria2*.ipk files/root/factoryipk
-cp $ipkbasedir/yaaw*.ipk files/root/factoryipk
+cp $ipkpkgdir/aria2*.ipk files/root/factoryipk
+cp $ipkpkgdir/webui-aria2*.ipk files/root/factoryipk
+cp $ipkpkgdir/yaaw*.ipk files/root/factoryipk
 
-ipkpkgdir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/luci"
-cp $ipkbasedir/luci-app-aria2*.ipk files/root/factoryipk
-cp $ipkbasedir/luci-i18n-aria2-zh-cn*.ipk files/root/factoryipk
+ipklucidir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/luci"
+cp $ipklucidir/luci-app-aria2*.ipk files/root/factoryipk
+cp $ipklucidir/luci-i18n-aria2-zh-cn*.ipk files/root/factoryipk
 }
 
 function lede_genscript()
