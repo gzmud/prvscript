@@ -275,3 +275,11 @@ myipk='aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn'
 echo $myipk  | xargs  -n1 echo | grep -v 'luci' | xargs -i make package/feeds/packages/{}/compile -j4
 echo $myipk  | xargs  -n1 echo | grep 'luci' | grep -v 'i18n' | xargs -i make package/feeds/luci/{}/compile -j4
 }
+
+function lede_updatecmd()
+{
+pushd ~/prvscript
+git pull
+. ledecmd.sh
+popd
+}
