@@ -33,6 +33,7 @@ pushd t
 	lede_dl
 	lede_unpack
 	pushd lede-sdk
+	#make defconfig
 	lede_makemyipk
 	lede_setsdk
 	lede_makesdk
