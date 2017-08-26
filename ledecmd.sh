@@ -22,6 +22,7 @@ ledeimg="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/l
 ledesdk="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-sdk-brcm2708-bcm2710_gcc-5.4.0_musl.Linux-x86_64.tar.xz"
 ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls coreutils-base64 ca-certificates ca-bundle curl bind-dig mtd mount-utils block-mount blockd ntfs-3g-utils minidlna samba36-server miniupnpd shadow-useradd usbutils luci-app-minidlna  luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn' 
 ledesdk32="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2708/lede-sdk-brcm2708-bcm2708_gcc-5.4.0_musl_eabi.Linux-x86_64.tar.xz"
+ledemyipk='aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn'
 lededir=$(readlink -f .) 
 }
 
@@ -33,10 +34,11 @@ pushd t
 	lede_dl
 	lede_unpack
 	pushd lede-sdk
-	#make defconfig
-	lede_makemyipk
+
 	lede_setsdk
 	lede_makesdk
+	#make defconfig
+	lede_makemyipk
 	popd
 
 	pushd lede-img
@@ -97,6 +99,7 @@ function lede_setsdk()
 
 lede_getsource
 ./scripts/feeds update -a
+./scripts/feeds install $ledemyipk
 }
 
 function lede_getsource()
@@ -273,12 +276,8 @@ EOF
 
 function lede_makemyipk()
 {
-myipk='aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn'
-./scripts/feeds update -a
-./scripts/feeds install $myipk
-
-echo $myipk  | xargs  -n1 echo | grep -v 'luci' | xargs -i make package/feeds/packages/{}/compile -j4
-echo $myipk  | xargs  -n1 echo | grep 'luci' | grep -v 'i18n' | xargs -i make package/feeds/luci/{}/compile -j4
+echo $ledemyipk  | xargs  -n1 echo | grep -v 'luci' | xargs -i make package/feeds/packages/{}/compile -j4
+echo $ledemyipk  | xargs  -n1 echo | grep 'luci' | grep -v 'i18n' | xargs -i make package/feeds/luci/{}/compile -j4
 }
 
 function lede_updatecmd()
