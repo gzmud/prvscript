@@ -184,6 +184,7 @@ function lede_setimgconfig ()
 	sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE\=256/CONFIG_TARGET_ROOTFS_PARTSIZE\=768/' .config
 	# CONFIG_TCP_CONG_BBR is not set
 	#sed -i 's/\# CONFIG_TCP_CONG_BBR is not set/CONFIG_TCP_CONG_BBR\=y/' .config
+	sed -i 's/aarch64_cortex-a53\//aarch64_cortex-a53_neon-vfpv4\//' repositories.conf
 	./scripts/feeds update -a
 }
 
