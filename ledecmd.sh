@@ -10,7 +10,7 @@ private script
 
 Usage:
 
-wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/ledecmd.sh -O ledecmd.sh
+wget --no-cache https://raw.github.com/gzmud/prvscript/master/ledecmd.sh -O ledecmd.sh
 . ledecmd.sh
 EOF
 }
@@ -50,9 +50,9 @@ popd
 
 function lede_dl()
 {
-test -e lede-img.tar.xz || wget $ledeimg -O lede-img.tar.xz
-test -e lede-sdk.tar.xz || wget $ledesdk -O lede-sdk.tar.xz
-test -e lede-sdk32.tar.xz || wget $ledesdk32 -O lede-sdk32.tar.xz
+test -e lede-img.tar.xz || wget --no-cache $ledeimg -O lede-img.tar.xz
+test -e lede-sdk.tar.xz || wget --no-cache $ledesdk -O lede-sdk.tar.xz
+test -e lede-sdk32.tar.xz || wget --no-cache $ledesdk32 -O lede-sdk32.tar.xz
 }
 
 function lede_set8812()
@@ -227,12 +227,12 @@ cat <<EOF > files/root/ss_watchdog.sh
 #!/bin/sh
  
 LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
-wget --spider --quiet --tries=1 --timeout=10 https://www.facebook.com/
+wget --no-cache --spider --quiet --tries=1 --timeout=10 https://www.facebook.com/
 if [ "$?" == "0" ]; then
 	echo '['$LOGTIME'] No Problem.'
 	exit 0
 else
-	wget --spider --quiet --tries=1 --timeout=10 https://www.baidu.com/
+	wget --no-cache --spider --quiet --tries=1 --timeout=10 https://www.baidu.com/
 	if [ "$?" == "0" ]; then
 		echo '['$LOGTIME'] Problem decteted, restarting shadowsocks.'
 		/etc/init.d/shadowsocks restart >/dev/null
@@ -247,7 +247,7 @@ cat <<EOF > files/root/update_ignore_list.sh
 
 set -e -o pipefail
 
-wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | \
+wget --no-cache -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | \
     awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > \
     /tmp/chinadns_chnroute.txt
 
