@@ -18,13 +18,12 @@ EOF
 # for lede init
 function lede_set ()
 {
-#ledeimg="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-imagebuilder-brcm2708-bcm2710.Linux-x86_64.tar.xz"
-#ledesdk="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/lede-sdk-brcm2708-bcm2710_gcc-5.4.0_musl.Linux-x86_64.tar.xz"
+
 ledeimg="https://downloads.lede-project.org/releases/17.01.2/targets/brcm2708/bcm2710/lede-imagebuilder-17.01.2-brcm2708-bcm2710.Linux-x86_64.tar.xz"
+
 ledesdk="https://downloads.lede-project.org/releases/17.01.2/targets/brcm2708/bcm2710/lede-sdk-17.01.2-brcm2708-bcm2710_gcc-5.4.0_musl-1.1.16_eabi.Linux-x86_64.tar.xz"
 
-ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libmbedtls coreutils-base64 ca-certificates ca-bundle curl bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-useradd usbutils luci-app-minidlna  luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn' 
-#ledesdk32="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2708/lede-sdk-brcm2708-bcm2708_gcc-5.4.0_musl_eabi.Linux-x86_64.tar.xz"
+ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils-base64 ca-certificates ca-bundle curl bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-useradd usbutils luci-app-minidlna  luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn' 
 ledesdk32="https://downloads.lede-project.org/releases/17.01.2/targets/brcm2708/bcm2708/lede-sdk-17.01.2-brcm2708-bcm2708_gcc-5.4.0_musl-1.1.16_eabi.Linux-x86_64.tar.xz"
 #ledemyipk='aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn'
 ledemyipk='aria2 webui-aria2 yaaw'
@@ -222,6 +221,18 @@ cp $ipkpkgdir/yaaw*.ipk files/root/factoryipk
 ipklucidir="../lede-sdk/bin/packages/aarch64_cortex-a53_neon-vfpv4/luci"
 cp $ipklucidir/luci-app-aria2*.ipk files/root/factoryipk
 cp $ipklucidir/luci-i18n-aria2-zh-cn*.ipk files/root/factoryipk
+}
+
+function lede_buildindex()
+{
+LEDE_OLDPATH="$PATH"
+export PATH="$PATH:$(pwd)/staging_dir/host/bin:$(pwd)/scripts"
+pushd $1
+	ipkg-make-index.sh . 2>&1 > Packages.manifest
+	grep -vE '^(Maintainer|LicenseFiles|Source|Require)' Packages.manifest > Packages && \
+	gzip -9nc Packages > Packages.gz
+popd
+export PATH="$LEDE_OLDPATH"
 }
 
 function lede_genscript()
