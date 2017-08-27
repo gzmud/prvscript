@@ -189,13 +189,17 @@ function lede_setimgconfig ()
 	# CONFIG_TCP_CONG_BBR is not set
 	#sed -i 's/\# CONFIG_TCP_CONG_BBR is not set/CONFIG_TCP_CONG_BBR\=y/' .config
 	#sed -i 's/aarch64_cortex-a53\//aarch64_cortex-a53_neon-vfpv4\//' repositories.conf
+	#src custom file:///usr/src/lede/bin/ramips/packages
+	echo  repositories.conf
 	./scripts/feeds update -a
 }
 
 function lede_makeimg()
 {
 	lede_imgcpfile
+	lede_buildindex files/root/factoryipk/
 	lede_genscript
+	cp files/root/factoryipk/*.ipk packages
 	make image PACKAGES="$ledepkg" FILES=files/
 }
 
