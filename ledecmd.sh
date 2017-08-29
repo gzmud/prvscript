@@ -23,7 +23,7 @@ ledeimg="https://downloads.lede-project.org/releases/17.01.2/targets/brcm2708/bc
 
 ledesdk="https://downloads.lede-project.org/releases/17.01.2/targets/brcm2708/bcm2710/lede-sdk-17.01.2-brcm2708-bcm2710_gcc-5.4.0_musl-1.1.16_eabi.Linux-x86_64.tar.xz"
 
-ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils-base64 ca-certificates ca-bundle curl bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-useradd usbutils luci-app-minidlna  luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks  ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder' 
+ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils-base64 ca-certificates ca-bundle curl bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-useradd usbutils luci-app-minidlna  luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks  ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder wget' 
 ledesdk32="https://downloads.lede-project.org/releases/17.01.2/targets/brcm2708/bcm2708/lede-sdk-17.01.2-brcm2708-bcm2708_gcc-5.4.0_musl-1.1.16_eabi.Linux-x86_64.tar.xz"
 #ledemyipk='aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn'
 ledemyipk='aria2 webui-aria2 yaaw'
@@ -268,8 +268,8 @@ cat <<EOF > files/root/update_ignore_list.sh
 
 set -e -o pipefail
 
-wget --no-cache -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | \
-    awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > \
+wget --no-cache -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | \\
+    awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", \$4, 32-log(\$5)/log(2)) }' > \\
     /tmp/chinadns_chnroute.txt
 
 mv /tmp/chinadns_chnroute.txt /etc/
