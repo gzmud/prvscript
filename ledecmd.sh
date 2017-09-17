@@ -321,3 +321,16 @@ function lede_dbinit()
 apt-get update
 apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python
 }
+
+function lede_quiltinit()
+{
+
+cat > ~/.quiltrc <<EOF
+QUILT_DIFF_ARGS="--no-timestamps --no-index -p ab --color=auto"
+QUILT_REFRESH_ARGS="--no-timestamps --no-index -p ab"
+QUILT_SERIES_ARGS="--color=auto"
+QUILT_PATCH_OPTS="--unified"
+QUILT_DIFF_OPTS="-p"
+EDITOR="nano"
+EOF
+}
