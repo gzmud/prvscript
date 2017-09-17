@@ -214,6 +214,7 @@ cp $ipkbasedir/dns-forwarder*.ipk files/root/factoryipk
 cp $ipkbasedir/luci-app-dns-forwarder_*.ipk files/root/factoryipk
 cp $ipkbasedir/ChinaDNS_*.ipk files/root/factoryipk
 cp $ipkbasedir/luci-app-chinadns_*.ipk files/root/factoryipk
+cp $ipkbasedir/simple-obfs*.ipk files/root/factoryipk
 
 ipkpkgdir="../lede-sdk/bin/packages/arm_cortex-a53_neon-vfpv4/packages"
 cp $ipkpkgdir/libsodium*.ipk files/root/factoryipk
@@ -307,4 +308,9 @@ pushd ~/prvscript
 git pull
 . ledecmd.sh
 popd
+}
+
+function lede_getsource()
+{
+	git clone https://git.lede-project.org/source.git
 }
