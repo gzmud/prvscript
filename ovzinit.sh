@@ -36,12 +36,20 @@ wget -qO- bench.sh | bash
 function ovz_initapt()
 {
 apt-get update
-apt-get install -y nano screen git
+apt-get install -y nano \
+     screen git \
+     apt-transport-https \
+     ca-certificates \
+     curl \
+     gnupg2 \
+     bash-completion
 }
 
 function ovz_installwebmin()
 {
 #webmin
+echo "deb http://download.webmin.com/download/repository sarge contrib" >/etc/apt/sources.list.d/webmin.list
+wget  -qO- http://www.webmin.com/jcameron-key.asc  | apt-key add -
 apt-get update
 apt-get install -y webmin
 }
@@ -60,7 +68,7 @@ apt update
 apt -y -t jessie-backports-sloppy install shadowsocks-libev
 test -z "$1" && SS_PORT="1088" || SS_PORT="$1"
 test -z "$2" && SS_PASS='mustbescrt!@' || SS_PASS="$2"
-test -z "$3" && SS_MATHOS="chacha20-ietf" || SS_MATHOS="$3"
+test -z "$3" && SS_MATHOS="chacha20-ietf" || SS_MATHOS="$3" 
 ovz_ssconfig "$SS_PORT" "$SS_PASS" "$SS_MATHOS"
 }
 
