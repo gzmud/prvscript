@@ -54,13 +54,13 @@ echo "not function"
 function ovz_installss()
 {
 #ss
-#sh -c 'printf "deb http://deb.debian.org/debian jessie-backports main\n" > /etc/apt/sources.list.d/jessie-backports.list'
-#sh -c 'printf "deb http://deb.debian.org/debian jessie-backports-sloppy main" >> /etc/apt/sources.list.d/jessie-backports.list'
-#apt update
-#apt -y -t jessie-backports-sloppy install shadowsocks-libev
+sh -c 'printf "deb http://deb.debian.org/debian jessie-backports main\n" > /etc/apt/sources.list.d/jessie-backports.list'
+sh -c 'printf "deb http://deb.debian.org/debian jessie-backports-sloppy main" >> /etc/apt/sources.list.d/jessie-backports.list'
+apt update
+apt -y -t jessie-backports-sloppy install shadowsocks-libev
 test -z "$1" && SS_PORT="1088" || SS_PORT="$1"
 test -z "$2" && SS_PASS='mustbescrt!@' || SS_PASS="$2"
-test -z "$3" && SS_MATHOS="chacha20-ietf" || SS_MATHOS="$3" 
+test -z "$3" && SS_MATHOS="chacha20-ietf" || SS_MATHOS="$3"
 ovz_ssconfig "$SS_PORT" "$SS_PASS" "$SS_MATHOS"
 }
 
