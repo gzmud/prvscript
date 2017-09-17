@@ -48,7 +48,7 @@ apt-get install -y webmin
 
 function ovz_lkl()
 {
-
+echo "not function"
 }
 
 function ovz_installss()
