@@ -49,7 +49,7 @@ function ovz_installwebmin()
 {
 #webmin
 echo "deb http://download.webmin.com/download/repository sarge contrib" >/etc/apt/sources.list.d/webmin.list
-wget  -qO- http://www.webmin.com/jcameron-key.asc  | apt-key add -
+wget -qO- http://www.webmin.com/jcameron-key.asc  | apt-key add -
 apt-get update
 apt-get install -y webmin
 }
@@ -61,6 +61,7 @@ ovz_lklss $1 $2
 
 function ovz_lklss()
 {
+sed -i '/\/root\/lkl\/run\.sh/d' /etc/rc.local
 wget --cache=off --no-cache -qO- https://raw.github.com/91yun/uml/master/lkl/install.sh \
 | sed "s/9000-9999/$1-$2/g" \
 | sed "s/9000:9999/$1:$2/g" \
@@ -75,11 +76,12 @@ function ovz_installss()
 sh -c 'printf "deb http://deb.debian.org/debian jessie-backports main\n" > /etc/apt/sources.list.d/jessie-backports.list'
 sh -c 'printf "deb http://deb.debian.org/debian jessie-backports-sloppy main" >> /etc/apt/sources.list.d/jessie-backports.list'
 apt update
-apt -y -t jessie-backports-sloppy install shadowsocks-libev
+apt -y -t jessie-backports-sloppy install shadowsocks-libev simple-obfs
 test -z "$1" && SS_PORT="1088" || SS_PORT="$1"
 test -z "$2" && SS_PASS='mustbescrt!@' || SS_PASS="$2"
 test -z "$3" && SS_MATHOS="chacha20-ietf" || SS_MATHOS="$3" 
 ovz_ssconfig "$SS_PORT" "$SS_PASS" "$SS_MATHOS"
+systemctl restart shadowsocks-libev
 }
 
 function ovz_ssloc ()

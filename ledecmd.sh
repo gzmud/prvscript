@@ -312,5 +312,12 @@ popd
 
 function lede_getsource()
 {
-	git clone https://git.lede-project.org/source.git
+	cd
+	git clone https://git.lede-project.org/source.git s
+}
+
+function lede_dbinit()
+{
+apt-get update
+apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python
 }
