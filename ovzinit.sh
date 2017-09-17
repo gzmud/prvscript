@@ -56,8 +56,18 @@ apt-get install -y webmin
 
 function ovz_lkl()
 {
-echo "not function"
+ovz_lklss $1 $2
 }
+
+function ovz_lklss()
+{
+wget --cache=off --no-cache -qO- https://raw.github.com/91yun/uml/master/lkl/install.sh \
+| sed "s/9000-9999/$1-$2/g" \
+| sed "s/9000:9999/$1:$2/g" \
+| sed "s/wget.*liblkl-hijack.so/&\ -O\ liblkl-hijack.so/g" \
+| /bin/bash
+}
+
 
 function ovz_installss()
 {
