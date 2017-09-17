@@ -335,7 +335,7 @@ EDITOR="nano"
 EOF
 }
 
-function prv_help ()
+function lede_help ()
 {
 cat << EOF
 
