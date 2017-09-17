@@ -334,3 +334,37 @@ QUILT_DIFF_OPTS="-p"
 EDITOR="nano"
 EOF
 }
+
+function prv_help ()
+{
+cat << EOF
+
+from https://lede-project.org/docs/guide-developer/use-buildsystem
+
+cd s
+./scripts/feeds update -a
+./scripts/feeds install -a
+run make menuconfig and set target;
+run make defconfig to set default config for build system and device;
+run make menuconfig and modify set of package;
+run scripts/diffconfig.sh >mydiffconfig (save your changes in the text file mydiffconfig);
+make kernel_menuconfig CONFIG_TARGET=subtarget
+git diff target/linux/
+git checkout target/linux/
+./scripts/diffconfig.sh > diffconfig # write the changes to diffconfig
+
+Using diff file
+
+These changes can form the basis of a config file (<buildroot dir>/.config). By running make defconfig these changes will be expanded into a full config.
+
+cp diffconfig .config   # write changes to .config
+make defconfig   # expand to full config
+These changes can also be added to the bottom of the config file (<buildroot dir>/.config), by running make defconfig these changes will override the existing configuration.
+
+cat diffconfig >> .config   # append changes to bottom of .config
+make defconfig   # apply changes
+
+ionice -c 3 nice -n19 make -j2
+make package/cups/compile V=s
+EOF
+}
