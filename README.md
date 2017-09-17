@@ -10,3 +10,7 @@ wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/prvscr
 wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/ledecmd.sh -O ledecmd.sh
 
 . ledecmd.sh
+
+wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/ovzinit.sh -O ovzinit.sh
+
+. ovzinit.sh
