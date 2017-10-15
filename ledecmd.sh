@@ -208,7 +208,7 @@ function lede_imgcpfile()
 {
 rm -rf files/
 mkdir -p files/root/factoryipk
-ipkbasedir="../lede-sdk/bin/packages/arm_cortex-a53_neon-vfpv4/base"
+ipkbasedir="../lede-sdk/bin/packages/*/base"
 cp $ipkbasedir/libudns*.ipk files/root/factoryipk
 cp $ipkbasedir/shadowsocks-libev*.ipk files/root/factoryipk
 cp $ipkbasedir/luci-app-shadowsocks_*.ipk files/root/factoryipk
@@ -218,13 +218,13 @@ cp $ipkbasedir/ChinaDNS_*.ipk files/root/factoryipk
 cp $ipkbasedir/luci-app-chinadns_*.ipk files/root/factoryipk
 cp $ipkbasedir/simple-obfs*.ipk files/root/factoryipk
 
-ipkpkgdir="../lede-sdk/bin/packages/arm_cortex-a53_neon-vfpv4/packages"
+ipkpkgdir="../lede-sdk/bin/packages/*/packages"
 cp $ipkpkgdir/libsodium*.ipk files/root/factoryipk
 cp $ipkpkgdir/aria2*.ipk files/root/factoryipk
 cp $ipkpkgdir/webui-aria2*.ipk files/root/factoryipk
 cp $ipkpkgdir/yaaw*.ipk files/root/factoryipk
 
-ipklucidir="../lede-sdk/bin/packages/arm_cortex-a53_neon-vfpv4/luci"
+ipklucidir="../lede-sdk/bin/packages/*/luci"
 cp $ipklucidir/luci-app-aria2*.ipk files/root/factoryipk
 cp $ipklucidir/luci-i18n-aria2-zh-cn*.ipk files/root/factoryipk
 }
