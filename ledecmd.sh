@@ -42,7 +42,7 @@ pushd t
 	lede_setsdk
 	lede_makesdk
 	#make defconfig
-	lede_makemyipk
+	lede_makemyipk2
 	popd
 
 	pushd lede-img
@@ -54,6 +54,8 @@ popd
 
 function lede_dl()
 {
+test -e ~/s/bin/targets/brcm2708/bcm2710/lede-sdk*.tar.xz && cp ~/s/bin/targets/brcm2708/bcm2710/lede-sdk*.tar.xz lede-sdk.tar.xz
+test -e ~/s/bin/targets/brcm2708/bcm2710/lede-imagebuilder*.tar.xz && cp ~/s/bin/targets/brcm2708/bcm2710/lede-imagebuilder*.tar.xz lede-img.tar.xz
 test -e lede-img.tar.xz || wget --no-cache $ledeimg -O lede-img.tar.xz
 test -e lede-sdk.tar.xz || wget --no-cache $ledesdk -O lede-sdk.tar.xz
 test -e lede-sdk32.tar.xz || wget --no-cache $ledesdk32 -O lede-sdk32.tar.xz
@@ -308,14 +310,9 @@ for i in $ledemyipk;
 do
 if [[ $i =~ "luci" ]]
 then
-	if [[ $i =~ "i18n" ]]
-	then
-		echo 'i18n';
-	else
-		echo $i;
-	fi;
+	! [[ $i =~ "i18n" ]] && make package/feeds/luci/$i/compile -j4
 else	
-	echo 'un luci' $i;
+	make package/feeds/packages/$i/compile -j4
 fi
 done
 }
