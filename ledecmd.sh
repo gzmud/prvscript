@@ -302,6 +302,24 @@ echo $ledemyipk  | xargs  -n1 echo | grep -v 'luci' | xargs -i make package/feed
 echo $ledemyipk  | xargs  -n1 echo | grep 'luci' | grep -v 'i18n' | xargs -i make package/feeds/luci/{}/compile -j4
 }
 
+function lede_makemyipk2()
+{
+for i in $ledemyipk;
+do
+if [[ $i =~ "luci" ]]
+then
+	if [[ $i =~ "i18n" ]]
+	then
+		echo 'i18n';
+	else
+		echo $i;
+	fi;
+else	
+	echo 'un luci' $i;
+fi
+done
+}
+
 function lede_updatecmd()
 {
 pushd ~/prvscript
