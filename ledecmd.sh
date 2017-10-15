@@ -310,7 +310,7 @@ git pull
 popd
 }
 
-function lede_getsource()
+function lede_getsource_all()
 {
 	cd
 	git clone https://git.lede-project.org/source.git s
