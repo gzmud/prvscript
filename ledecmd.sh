@@ -383,3 +383,7 @@ ionice -c 3 nice -n19 make -j2
 make package/cups/compile V=s
 EOF
 }
+function ovz_bench() 
+{ 
+	wget -qO- bench.sh | bash
+}
