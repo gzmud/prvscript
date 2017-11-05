@@ -392,11 +392,13 @@ function lede_buildfrsrv()
 {
 	lede_getsource_all
 	pushd s
+	./scripts/feeds update -a
 	./scripts/feeds install $ledepkg
 	./scripts/feeds install $ledemyipk
 	lede_getsource
 	#make tools/compile
 	#make toolchain/compile -j4
 	#make target/compile -j4
+	#make target/linux/compile -j4
 	#make package/compile -j4
 }
