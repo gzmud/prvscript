@@ -402,3 +402,11 @@ function lede_buildfrsrv()
 	#make target/linux/compile -j4
 	#make package/compile -j4
 }
+
+function lede_checkcfg()
+{
+	for i in $ledepkg
+	do
+		echo $i;
+	done
+}
