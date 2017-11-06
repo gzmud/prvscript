@@ -405,6 +405,7 @@ function lede_buildfrsrv()
 
 function lede_checkcfg()
 {
+	diffconf=`./scripts/diffconfig.sh`
 	for i in $ledepkg
 	do
 		echo $i;
