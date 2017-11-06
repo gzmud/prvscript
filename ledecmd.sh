@@ -405,8 +405,11 @@ function lede_buildfrsrv()
 
 function lede_checkcfg()
 {
+	./scripts/diffconfig.sh > hhhtmpdiff.conf
+	rm hhhtmpnoneset.conf
 	for i in $ledepkg
 	do
-		./scripts/diffconfig.sh | grep CONFIG_PACKAGE_$i= > /dev/null  || echo $i
+		cat hhhtmpdiff.conf | grep CONFIG_PACKAGE_$i= || echo $i >> hhhtmpnoneset.conf
 	done
+	cat hhhtmpnoneset.conf
 }
