@@ -407,7 +407,7 @@ function lede_checkcfg()
 {
 	for i in $ledepkg
 	do
-		./scripts/diffconfig.sh | grep $i
+		echo ./scripts/diffconfig.sh  grep $i
 		echo $i
 	done
 }
