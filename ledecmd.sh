@@ -407,6 +407,6 @@ function lede_checkcfg()
 {
 	for i in $ledepkg
 	do
-		./scripts/diffconfig.sh | grep CONFIG_PACKAGE_$i= || echo $i
+		./scripts/diffconfig.sh | grep CONFIG_PACKAGE_$i= > /dev/null  || echo $i
 	done
 }
