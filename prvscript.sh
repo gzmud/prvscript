@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #lede cmd ref  https://lede-project.org/docs/user-guide/imagebuilder
-#
+#git clone https://github.com/gzmud/prvscript.git
 PRV_SSCONFIG=~/.ss.json
 
 function prv_help ()
