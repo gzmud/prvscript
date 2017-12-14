@@ -434,6 +434,11 @@ function lede_buildfrsrv2()
 	#make package/compile -j4
 }
 
+function lede_kerconf()
+{
+make kernel_menuconfig CONFIG_TARGET=subtarget
+}
+
 function lede_checkcfg()
 {
 	./scripts/diffconfig.sh > hhhtmpdiff.conf
