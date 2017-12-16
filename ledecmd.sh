@@ -410,8 +410,6 @@ test -d $2 && ( pushd $2; git pull ; popd ) || git clone $1 $2
 
 function lede_getsource2()
 {
-./scripts/feeds update -a
-./scripts/feeds install -a
 #lede_gitit https://github.com/shadowsocks/openwrt-feeds.git package/feeds 
 #lede_gitit https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadowsocks-libev
 lede_gitit https://github.com/aa65535/openwrt-chinadns.git package/chinadns
@@ -426,7 +424,9 @@ function lede_buildfrsrv2()
 {
 	lede_getsource_all
 	pushd s
-	lede_getsource2
+	./scripts/feeds update -a
+	./scripts/feeds install -a
+	#lede_getsource2
 	#make tools/compile
 	#make toolchain/compile -j4
 	#make target/linux/compile -j4 V=99
