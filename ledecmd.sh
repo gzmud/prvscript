@@ -434,9 +434,23 @@ function lede_buildfrsrv2()
 	#make package/compile -j4
 }
 
+function lede_buildit2()
+{
+	make -j4 tools/compile
+	make -j1 tools/cmake/compile
+	make -j4 tools/compile
+	make -j4 toolchain/compile
+
+	#make target/linux/compile -j4 V=99
+	#make target/compile -j4
+	#make package/compile -j4
+}
+
 function lede_kerconf()
 {
-make kernel_menuconfig CONFIG_TARGET=subtarget
+make menuconfig
+make defconfig
+make kernel_menuconfig CONFIG_TARGET=subtarget -j4
 }
 
 function lede_checkcfg()
