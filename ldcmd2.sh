@@ -47,10 +47,10 @@ test -d $2 && ( pushd $2; git pull ; popd ) || git clone $1 $2
 function ld_getmy()
 {
 #ld_gitit https://github.com/shadowsocks/openwrt-feeds.git package/feeds 
-#ld_gitit https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadowsocks-libev
+ld_gitit https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadowsocks-libev
 ld_gitit https://github.com/aa65535/openwrt-chinadns.git package/chinadns
 ld_gitit https://github.com/aa65535/openwrt-dns-forwarder.git package/dns-forwarder
-#ld_gitit https://github.com/aa65535/openwrt-simple-obfs.git package/simple-obfs
+ld_gitit https://github.com/aa65535/openwrt-simple-obfs.git package/simple-obfs
 #ld_gitit https://github.com/shadowsocks/luci-app-shadowsocks.git package/luci-app-shadowsocks
 ld_gitit https://github.com/aa65535/openwrt-dist-luci.git package/openwrt-dist-luci
 }
@@ -106,13 +106,7 @@ make kernel_menuconfig CONFIG_TARGET=subtarget -j4
 
 function ld_checkcfg()
 {
-	./scripts/diffconfig.sh > hhhtmpdiff.conf
-	rm hhhtmpnoneset.conf
-	for i in $ldpkg
-	do
-		cat hhhtmpdiff.conf | grep CONFIG_PACKAGE_$i= || echo $i >> hhhtmpnoneset.conf
-	done
-	cat hhhtmpnoneset.conf
+awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){if ($0 ~ "_"tNeed[k]"=y") {print $0;tHave[k]=tNeed[k];delete tNeed[k] } else if ($0 ~ "_"tNeed[k]" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] };print length(tNeed)}' .config
 }
 
 function ld_modcfg()
@@ -124,7 +118,7 @@ function ld_modcfg()
 	cat hhhtmpnoneset.conf
 	#awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeedpkg," ");for(k in tNeedpkg){ tStat [ tNeedpkg[k] ]="n"}};{for(k in tStat ){ if ($0 ~ "_"k "=y") {print $0;tStat[ k ] ="y";delete tStat[ k ];tHave[k]="y" } else if ($0 ~ "_"k" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tStat ){ print k }}' .config
 	#awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){key=tNeed[k]; if ($0 ~ "_"key"=y") {print $0;tHave[k]=key;delete tNeed[k] } else if ($0 ~ "_"key" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] }}' .config
-	#awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){if ($0 ~ "_"tNeed[k]"=y") {print $0;tHave[k]=tNeed[k];delete tNeed[k] } else if ($0 ~ "_"tNeed[k]" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] }}' .config
+	#awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){if ($0 ~ "_"tNeed[k]"=y") {print $0;tHave[k]=tNeed[k];delete tNeed[k] } else if ($0 ~ "_"tNeed[k]" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] };print length(tNeed)}' .config
 
 }
 
