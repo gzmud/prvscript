@@ -11,3 +11,6 @@ wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/ledecm
 
 wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/ovzinit.sh -O ovzinit.sh \
 && . ovzinit.sh
+
+wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/ldcmd2.sh -O ldcmd2.sh \
+&& . ldcmd2.sh

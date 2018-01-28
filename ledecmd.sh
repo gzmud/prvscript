@@ -440,7 +440,8 @@ function lede_buildit2()
 	make -j1 tools/cmake/compile
 	make -j4 tools/compile
 	make -j4 toolchain/compile
-
+	make -j1 toolchain/compile
+	make -j4
 	#make target/linux/compile -j4 V=99
 	#make target/compile -j4
 	#make package/compile -j4
