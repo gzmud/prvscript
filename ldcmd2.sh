@@ -117,7 +117,7 @@ function ld_checkcfg()
 
 function ld_savecfg()
 {
-	./scripts/diffconfig.sh ~/prvscript/ldconf/$(date +%Y-%m-%d-%s).conf
+	./scripts/diffconfig.sh > ~/prvscript/ldconf/$(date +%Y-%m-%d-%s).conf
     pushd ~/prvscript
     git push
     popd
