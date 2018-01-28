@@ -47,6 +47,7 @@ test -d $2 && ( pushd $2; git pull ; popd ) || git clone $1 $2
 function _ld_getmy()
 {
 #_ld_gitit https://github.com/shadowsocks/openwrt-feeds.git package/feeds 
+./scripts/feeds uninstall shadowsocks-libev 
 _ld_gitit https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadowsocks-libev
 _ld_gitit https://github.com/aa65535/openwrt-chinadns.git package/chinadns
 _ld_gitit https://github.com/aa65535/openwrt-dns-forwarder.git package/dns-forwarder
@@ -102,6 +103,8 @@ function ld_kerconf()
 make menuconfig
 make defconfig
 make kernel_menuconfig CONFIG_TARGET=subtarget -j4
+sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=100/' .config
+sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE\=256/CONFIG_TARGET_ROOTFS_PARTSIZE\=768/' .config
 }
 
 function ld_checkcfg()
@@ -124,8 +127,12 @@ function ld_modcfg()
 
 function ld_savecfg()
 {
-	./scripts/diffconfig.sh > ~/prvscript/ldconf/$(date +%Y-%m-%d-%s).conf
+    conffile=ldconf/$(date +%Y-%m-%d-%s).conf
+	./scripts/diffconfig.sh > ~/prvscript/$conffile
     pushd ~/prvscript
+    git pull
+    git add conffile
+    git commit -a -m "add $conffile"
     git push
     popd
 }
