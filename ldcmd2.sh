@@ -51,7 +51,7 @@ _ld_gitit https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadows
 _ld_gitit https://github.com/aa65535/openwrt-chinadns.git package/chinadns
 _ld_gitit https://github.com/aa65535/openwrt-dns-forwarder.git package/dns-forwarder
 _ld_gitit https://github.com/aa65535/openwrt-simple-obfs.git package/simple-obfs
-#_ld_gitit https://github.com/shadowsocks/luci-app-shadowsocks.git package/luci-app-shadowsocks
+_ld_gitit https://github.com/shadowsocks/luci-app-shadowsocks.git package/luci-app-shadowsocks
 _ld_gitit https://github.com/aa65535/openwrt-dist-luci.git package/openwrt-dist-luci
 }
 
