@@ -18,7 +18,7 @@ EOF
 # for lede init
 function ld_set ()
 {
-ldpkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils-base64 ca-certificates ca-bundle curl bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-useradd usbutils luci-app-minidlna  luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder wget' 
+ldpkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils-base64 ca-certificates ca-bundle bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-useradd usbutils luci-app-minidlna luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder wget' 
 
 #ldmyipk='aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn'
 ldmyipk='aria2 webui-aria2 yaaw'
@@ -108,11 +108,24 @@ function ld_checkcfg()
 {
 	./scripts/diffconfig.sh > hhhtmpdiff.conf
 	rm hhhtmpnoneset.conf
-	for i in $ledepkg
+	for i in $ldpkg
 	do
 		cat hhhtmpdiff.conf | grep CONFIG_PACKAGE_$i= || echo $i >> hhhtmpnoneset.conf
 	done
 	cat hhhtmpnoneset.conf
+}
+
+function ld_modcfg()
+{
+	for i in $ldpkg
+	do
+		cat hhhtmpdiff.conf | grep CONFIG_PACKAGE_$i= || echo $i >> hhhtmpnoneset.conf
+	done
+	cat hhhtmpnoneset.conf
+	#awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeedpkg," ");for(k in tNeedpkg){ tStat [ tNeedpkg[k] ]="n"}};{for(k in tStat ){ if ($0 ~ "_"k "=y") {print $0;tStat[ k ] ="y";delete tStat[ k ];tHave[k]="y" } else if ($0 ~ "_"k" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tStat ){ print k }}' .config
+	#awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){key=tNeed[k]; if ($0 ~ "_"key"=y") {print $0;tHave[k]=key;delete tNeed[k] } else if ($0 ~ "_"key" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] }}' .config
+	#awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){if ($0 ~ "_"tNeed[k]"=y") {print $0;tHave[k]=tNeed[k];delete tNeed[k] } else if ($0 ~ "_"tNeed[k]" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] }}' .config
+
 }
 
 function ld_savecfg()
