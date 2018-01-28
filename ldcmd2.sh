@@ -33,35 +33,35 @@ git pull
 popd
 }
 
-function ld_get()
+function _ld_get()
 {
 	pushd $lddir
 	git clone https://git.lede-project.org/source.git s
 }
 
-function ld_gitit()
+function _ld_gitit()
 {
 test -d $2 && ( pushd $2; git pull ; popd ) || git clone $1 $2
 }
 
-function ld_getmy()
+function _ld_getmy()
 {
-#ld_gitit https://github.com/shadowsocks/openwrt-feeds.git package/feeds 
-ld_gitit https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadowsocks-libev
-ld_gitit https://github.com/aa65535/openwrt-chinadns.git package/chinadns
-ld_gitit https://github.com/aa65535/openwrt-dns-forwarder.git package/dns-forwarder
-ld_gitit https://github.com/aa65535/openwrt-simple-obfs.git package/simple-obfs
-#ld_gitit https://github.com/shadowsocks/luci-app-shadowsocks.git package/luci-app-shadowsocks
-ld_gitit https://github.com/aa65535/openwrt-dist-luci.git package/openwrt-dist-luci
+#_ld_gitit https://github.com/shadowsocks/openwrt-feeds.git package/feeds 
+_ld_gitit https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadowsocks-libev
+_ld_gitit https://github.com/aa65535/openwrt-chinadns.git package/chinadns
+_ld_gitit https://github.com/aa65535/openwrt-dns-forwarder.git package/dns-forwarder
+_ld_gitit https://github.com/aa65535/openwrt-simple-obfs.git package/simple-obfs
+#_ld_gitit https://github.com/shadowsocks/luci-app-shadowsocks.git package/luci-app-shadowsocks
+_ld_gitit https://github.com/aa65535/openwrt-dist-luci.git package/openwrt-dist-luci
 }
 
 function ld_getsrc()
 {
-	ld_get
+	_ld_get
 	pushd s
 	./scripts/feeds update -a
 	./scripts/feeds install -a
-	ld_getmy
+	_ld_getmy
 }
 
 function ld_build()
@@ -85,7 +85,7 @@ ld_kerconf
 ld_build
 }
 
-function ld_quiltinit()
+function _ld_quiltinit()
 {
 cat > ~/.quiltrc <<EOF
 QUILT_DIFF_ARGS="--no-timestamps --no-index -p ab --color=auto"
