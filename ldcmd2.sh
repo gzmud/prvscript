@@ -11,6 +11,7 @@ private script
 Usage:
 
 wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/ldcmd2.sh -O ldcmd2.sh && . ldcmd2.sh
+git clone https://github.com/gzmud/prvscript.git
 
 EOF
 }
