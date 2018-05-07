@@ -113,6 +113,12 @@ git pull
 _ld_getmy
 }
 
+function ld_main()
+{
+. /usr/share/bash-completion/bash_completion
+test -d s && ld_run || ld_runonce
+}
+
 function ld_hello()
 {
 test -d s && return 0
