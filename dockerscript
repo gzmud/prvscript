@@ -1,0 +1,106 @@
+#!/bin/bash
+#
+#ldcmd ref  https://openwrt.org/docs/guide-developer/source-code/start
+#
+
+function _ld_set ()
+{
+ldpkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils-base64 ca-certificates ca-bundle bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-useradd usbutils luci-app-minidlna luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder wget' 
+ldmyipk='aria2 webui-aria2 yaaw'
+lddir=$(readlink -f .) 
+}
+
+function _ld_gitit()
+{
+test -d $2 && ( pushd $2; git pull ; popd ) || git clone $1 $2
+}
+
+function _ld_getmy()
+{
+./scripts/feeds uninstall shadowsocks-libev 
+_ld_gitit https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadowsocks-libev
+_ld_gitit https://github.com/aa65535/openwrt-chinadns.git package/chinadns
+_ld_gitit https://github.com/aa65535/openwrt-dns-forwarder.git package/dns-forwarder
+_ld_gitit https://github.com/aa65535/openwrt-simple-obfs.git package/simple-obfs
+_ld_gitit https://github.com/shadowsocks/luci-app-shadowsocks.git package/luci-app-shadowsocks
+_ld_gitit https://github.com/aa65535/openwrt-dist-luci.git package/openwrt-dist-luci
+}
+
+function ld_build()
+{
+	make -j4 tools/compile
+	make -j1 tools/cmake/compile
+	make -j4 tools/compile
+	make -j4 toolchain/compile
+	make -j1 toolchain/compile
+	make -j4
+	#make target/linux/compile -j4 V=99
+	#make target/compile -j4
+	#make package/compile -j4
+}
+
+function ld_make()
+{
+#ld_getsrc
+#ld_update
+ld_kerconf
+ld_build
+}
+
+function ld_kerconf()
+{
+make menuconfig
+make defconfig
+make kernel_menuconfig CONFIG_TARGET=subtarget -j4
+sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=100/' .config
+sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE\=256/CONFIG_TARGET_ROOTFS_PARTSIZE\=768/' .config
+}
+
+function ld_checkcfg()
+{
+awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){if ($0 ~ "_"tNeed[k]"=y") {print $0;tHave[k]=tNeed[k];delete tNeed[k] } else if ($0 ~ "_"tNeed[k]" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] };print length(tNeed)}' .config
+}
+
+function ld_modcfg()
+{
+	for i in $ldpkg
+	do
+		cat hhhtmpdiff.conf | grep CONFIG_PACKAGE_$i= || echo $i >> hhhtmpnoneset.conf
+	done
+	cat hhhtmpnoneset.conf
+}
+
+function ld_savecfg()
+{
+    conffile=ldconf/$(date +%Y-%m-%d-%s).conf
+	./scripts/diffconfig.sh > ~/prvscript/$conffile
+    pushd ~/prvscript
+    git pull
+    git add conffile
+    git commit -a -m "add $conffile"
+    git push
+    popd
+}
+
+function ld_runonce()
+{
+cd
+git clone https://github.com/openwrt/openwrt.git s
+cd s
+git checkout master
+./scripts/feeds update -a
+./scripts/feeds install -a
+_ld_getmy
+}
+
+function ld_run()
+{
+. /usr/share/bash-completion/bash_completion
+cd
+cd s
+make distclean
+git checkout master
+git pull
+./scripts/feeds update -a
+_ld_getmy
+}
