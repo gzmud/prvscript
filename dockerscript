@@ -125,5 +125,4 @@ test -d s && return 0
 echo hello
 }
 
-ld_updatecmd
 ld_main
