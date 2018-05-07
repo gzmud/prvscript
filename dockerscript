@@ -90,12 +90,14 @@ function ld_savecfg()
 
 function ld_runonce()
 {
+test -d s && return 0
 cd
-git clone https://github.com/openwrt/openwrt.git s
+_ld_gitit https://github.com/openwrt/openwrt.git s
 cd s
 git checkout master
 ./scripts/feeds update -a
 ./scripts/feeds install -a
+ln -s ~/lede/ bin
 _ld_getmy
 }
 
@@ -109,4 +111,10 @@ git checkout master
 git pull
 ./scripts/feeds update -a
 _ld_getmy
+}
+
+function ld_hello()
+{
+test -d s && return 0
+echo hello
 }
