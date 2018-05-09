@@ -69,12 +69,12 @@ awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")
 
 function ld_setpkg()
 {
-awk '/^[ \t#]CONFIG_PACKAGE_'$1'[ \t]/{print CONFIG_PACKAGE_'$1'=y}' .config
+awk '/^[ \t]*#.*CONFIG_PACKAGE_'$1'[ \t]/{print CONFIG_PACKAGE_'$1'=y}' .config
 }
 
 function ld_getpkg()
 {
-awk '/^[ \t]CONFIG_PACKAGE_'$1'[ \t=]*/{gsub("/^[ \t]CONFIG_PACKAGE_'$1'[ \t=]*/","",$0);print CONFIG_PACKAGE_'$1'=y}' .config
+awk '/^[ \t]*CONFIG_PACKAGE_'$1'[ \t=]*/{gsub("/^[ \t]*CONFIG_PACKAGE_'$1'[ \t=]*/","",$0);print CONFIG_PACKAGE_'$1'=y}' .config
 }
 
 function ld_modcfg()
