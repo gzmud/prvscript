@@ -118,6 +118,13 @@ git pull
 _ld_getmy
 }
 
+function ld_setbcm2710()
+{
+echo 'CONFIG_TARGET_brcm2708=y
+CONFIG_TARGET_brcm2708_bcm2710=y
+CONFIG_TARGET_brcm2708_bcm2710_DEVICE_rpi-3=y' > .config
+}
+
 function ld_main()
 {
 . /usr/share/bash-completion/bash_completion
@@ -131,3 +138,4 @@ echo hello
 }
 
 ld_main
+ld_setbcm2710
