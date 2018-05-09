@@ -67,6 +67,11 @@ function ld_checkcfg()
 awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){if ($0 ~ "_"tNeed[k]"=y") {print $0;tHave[k]=tNeed[k];delete tNeed[k] } else if ($0 ~ "_"tNeed[k]" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] };print length(tNeed)}' .config
 }
 
+function ld_setpkg()
+{
+awk '/CONFIG_PACKAGE_'$1'/{print $0}' .config
+}
+
 function ld_modcfg()
 {
 	for i in $ldpkg
