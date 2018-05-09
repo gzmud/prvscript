@@ -142,5 +142,21 @@ test -d s && return 0
 echo hello
 }
 
+function ld_testawk()
+{
+echo '#
+# Automatically generated file; DO NOT EDIT.
+# LEDE Configuration
+#
+CONFIG_MODULES=y
+CONFIG_HAVE_DOT_CONFIG=y
+# CONFIG_TARGET_arm64 = = is not set
+# CONFIG_TARGET_sunxi is not set
+# CONFIG_TARGET_apm821xx is not set
+#    CONFIG_TARGET_ath25 is not set
+CONFIG_TARGET_ARCH_PACKAGES="arm_cortex-a53_neon-vfpv4"
+CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mcpu=cortex-a53 -mfpu=neon-vfpv4"'
+}
+
 ld_main
 ld_setbcm2710
