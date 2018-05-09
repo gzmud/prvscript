@@ -133,6 +133,7 @@ CONFIG_TARGET_brcm2708_bcm2710_DEVICE_rpi-3=y' > .config
 function ld_main()
 {
 . /usr/share/bash-completion/bash_completion
+cd
 test -d s && ld_run || ld_runonce
 }
 
