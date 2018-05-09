@@ -80,11 +80,19 @@ awk '/^[ \t]*CONFIG_PACKAGE_'$1'[ \t=]*/{gsub("/^[ \t]*CONFIG_PACKAGE_'$1'[ \t=]
 
 function ld_modcfg()
 {
-	for i in $ldpkg
-	do
-            `ld_pkgcheck $i` && ld_setpkg
-	done
-	cat hhhtmpnoneset.conf
+make defconfig
+ld_modconfig >>.config
+make defconfig
+ld_modconfig >>.config
+make defconfig
+}
+
+function ld_modconfig()
+{
+    for i in $ldpkg
+    do
+    awk '{if(match ($0,/^([ #\t]*)(CONFIG_PACKAGE_'$i')[ \t=]+(.*)$/,m)){pkg["'$i'"]=1;print m[2]"=y"}} END {if (!pkg["'$i'"]) {print "#'$i'"}}' .config
+    done
 }
 
 function ld_testredun()
