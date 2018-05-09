@@ -11,7 +11,8 @@ wget -O /etc/dockerscript https://raw.githubusercontent.com/gzmud/prvscript/mast
 
 function _ld_set()
 {
-ldpkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils-base64 ca-certificates ca-bundle bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-useradd usbutils luci-app-minidlna luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder wget' 
+ldpkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils coreutils-base64 ca-certificates ca-bundle bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-utils
+shadow-useradd usbutils luci-app-minidlna luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder wget' 
 ldmyipk='aria2 webui-aria2 yaaw'
 lddir=$(readlink -f .) 
 }
@@ -81,9 +82,27 @@ function ld_modcfg()
 {
 	for i in $ldpkg
 	do
-		cat hhhtmpdiff.conf | grep CONFIG_PACKAGE_$i= || echo $i >> hhhtmpnoneset.conf
+            `ld_pkgcheck $i` && ld_setpkg
 	done
 	cat hhhtmpnoneset.conf
+}
+
+function ld_testredun()
+{
+ awk '{if(match ($0,/^[# \t]*(CONFIG_PACKAGE_[^= \t]*)[ \t=]+(.*)$/,m)){p[m[1]]++}}END{for (a in p) {if (--p[a]) print a,p[a]++}}' .config
+}
+
+function ld_pkgprobe()
+{
+#ld_pkgcheck $1 && return 1
+ awk '{if(match ($0,/^[# \t]*(CONFIG_PACKAGE_[^= \t]*'$1'[^= \t]*)[ \t=]+(.*)$/,m)){p[m[1]]++}}END{for (a in p) { print a} ; exit length(p)}' .config
+ return $?
+}
+
+function ld_pkgcheck()
+{
+awk '{if(match ($0,/^[# \t]*(CONFIG_PACKAGE_'$1')[ \t=]+(.*)$/,m)){p[m[1]]++}} END{for (a in p) {print a};exit !length(p)}' .config
+return $?
 }
 
 function ld_savecfg()
@@ -120,6 +139,7 @@ make distclean
 git checkout lede-17.01
 git pull
 ./scripts/feeds update -a
+./scripts/feeds install -a
 _ld_getmy
 }
 
