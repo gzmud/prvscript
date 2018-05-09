@@ -164,6 +164,7 @@ function ld_main()
 {
 . /usr/share/bash-completion/bash_completion
 cd
+_ld_set
 test -d s && ld_run || ld_runonce
 }
 
