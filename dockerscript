@@ -12,9 +12,9 @@ wget -O /etc/dockerscript https://raw.githubusercontent.com/gzmud/prvscript/mast
 function _ld_set()
 {
 ldpkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils coreutils-base64 ca-certificates ca-bundle bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-utils
-shadow-useradd usbutils luci-app-minidlna luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder wget' 
+shadow-useradd usbutils luci-app-minidlna luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder wget'
 ldmyipk='aria2 webui-aria2 yaaw'
-lddir=$(readlink -f .) 
+lddir=$(readlink -f .)
 }
 
 function _ld_gitit()
@@ -24,7 +24,7 @@ test -d $2 && ( pushd $2; git pull ; popd ) || git clone $1 $2
 
 function _ld_getmy()
 {
-./scripts/feeds uninstall shadowsocks-libev 
+./scripts/feeds uninstall shadowsocks-libev
 _ld_gitit https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadowsocks-libev
 _ld_gitit https://github.com/aa65535/openwrt-chinadns.git package/chinadns
 _ld_gitit https://github.com/aa65535/openwrt-dns-forwarder.git package/dns-forwarder
@@ -162,10 +162,22 @@ CONFIG_TARGET_brcm2708_bcm2710_DEVICE_rpi-3=y' > .config
 
 function ld_main()
 {
-. /usr/share/bash-completion/bash_completion
-cd
-_ld_set
-test -d s && ld_run || ld_runonce
+case $1 in
+	ld_main)
+	. /usr/share/bash-completion/bash_completion
+	cd
+	_ld_set
+	test -d s && ld_run || ld_runonce
+	;;
+	ld_run)
+	. /usr/share/bash-completion/bash_completion
+	cd
+	_ld_set
+	ld_run
+	?)
+	echo "Unknow CMD"
+	exit 1;;
+esac
 }
 
 function ld_hello()
