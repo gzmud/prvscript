@@ -203,5 +203,5 @@ CONFIG_TARGET_ARCH_PACKAGES="arm_cortex-a53_neon-vfpv4"
 CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mcpu=cortex-a53 -mfpu=neon-vfpv4"'
 }
 
-ld_main
+ld_main $$
 #ld_setbcm2710
