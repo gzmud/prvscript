@@ -175,8 +175,9 @@ case $1 in
 	_ld_set
 	ld_run
 	;;
-	?)
-	echo "Unknow CMD" $@ ;;
+	*)
+	echo "Unknow CMD" $@
+	;;
 esac
 }
 
