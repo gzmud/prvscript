@@ -15,6 +15,7 @@ ldpkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net kmod-
 shadow-useradd usbutils luci-app-minidlna luci-i18n-minidlna-zh-cn luci-app-samba luci-i18n-samba-zh-cn luci-app-upnp luci-i18n-upnp-zh-cn aria2 webui-aria2 yaaw luci-app-aria2 luci-i18n-aria2-zh-cn libudns libsodium shadowsocks-libev shadowsocks-libev-server luci-app-shadowsocks ChinaDNS luci-app-chinadns dns-forwarder luci-app-dns-forwarder wget'
 ldmyipk='aria2 webui-aria2 yaaw'
 #lddir=$(readlink -f .)
+ldmkopt='-j4'
 }
 
 function _ld_gitit()
