@@ -176,7 +176,7 @@ case $1 in
 	ld_run
 	;;
 	?)
-	echo "Unknow CMD";;
+	echo "Unknow CMD" $$;;
 esac
 }
 
