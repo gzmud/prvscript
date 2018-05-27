@@ -17,6 +17,7 @@ shadow-useradd usbutils luci-app-minidlna luci-i18n-minidlna-zh-cn luci-app-samb
 ldmyipk='aria2 webui-aria2 yaaw'
 #lddir=$(readlink -f .)
 ldmkopt='-j4'
+ldbrach='lede-17.01'
 }
 
 function _ld_gitit()
@@ -135,7 +136,7 @@ test -d s && return 0
 cd
 _ld_gitit https://github.com/openwrt/openwrt.git s
 cd s
-git checkout lede-17.01
+git checkout $ldbrach
 ld_setbcm2710
 ./scripts/feeds update -a
 ./scripts/feeds install -a
@@ -150,7 +151,7 @@ cd
 _ld_gitit https://github.com/openwrt/openwrt.git s && ln -s ~/lede/ ~/s/bin
 cd s
 #make distclean
-git checkout lede-17.01
+git checkout $ldbrach
 git pull
 ld_setbcm2710
 ./scripts/feeds update -a
