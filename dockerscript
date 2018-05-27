@@ -19,7 +19,7 @@ lddir=$(readlink -f .)
 
 function _ld_gitit()
 {
-test -d $2 && ( pushd $2; git pull ; popd ) || git clone $1 $2
+test -d $2 && ( pushd $2; git pull ; popd ; exit 1 ) || git clone $1 $2
 }
 
 function _ld_getmy()
@@ -125,7 +125,7 @@ function ld_savecfg()
     popd
 }
 
-function ld_runonce()
+function _ld_runonce()
 {
 test -d s && return 0
 cd
@@ -143,8 +143,9 @@ function ld_run()
 {
 . /usr/share/bash-completion/bash_completion
 cd
+_ld_gitit https://github.com/openwrt/openwrt.git s && ln -s ~/lede/ bin
 cd s
-make distclean
+#make distclean
 git checkout lede-17.01
 git pull
 ld_setbcm2710
