@@ -6,7 +6,7 @@
 function ld_updatecmd()
 {
 wget -O /etc/dockerscript https://raw.githubusercontent.com/gzmud/prvscript/master/dockerscript
-. /etc/dockerscript "Update complete"
+echo "ld_updatecmd complete"
 }
 
 function _ld_set()
@@ -182,7 +182,7 @@ case $1 in
 	;;
 	''|ld_updatecmd)
 	{
-		echo "ld_updatecmd complete"
+		ld_updatecmd
 	}
 	;;
 	*)
