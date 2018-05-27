@@ -164,18 +164,8 @@ CONFIG_TARGET_brcm2708_bcm2710_DEVICE_rpi-3=y' > .config
 function ld_main()
 {
 case $1 in
-	ld_main)
+	ld_main|ld_run)
 	{
-		. /usr/share/bash-completion/bash_completion
-		cd
-		_ld_set
-		test -d s && ld_run || ld_runonce
-	}
-	;;
-	ld_run)
-	{
-		. /usr/share/bash-completion/bash_completion
-		cd
 		_ld_set
 		ld_run
 	}
