@@ -176,6 +176,9 @@ case $1 in
 	_ld_set
 	ld_run
 	;;
+	''|ld_updatecmd)
+	echo "ld_updatecmd complete"
+	;;
 	*)
 	echo "Unknow CMD" $@
 	;;
