@@ -63,7 +63,7 @@ sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\
 sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE\=256/CONFIG_TARGET_ROOTFS_PARTSIZE\=768/' .config
 }
 
-function ld_checkcfg()
+function _ld_checkcfg()
 {
 awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){if ($0 ~ "_"tNeed[k]"=y") {print $0;tHave[k]=tNeed[k];delete tNeed[k] } else if ($0 ~ "_"tNeed[k]" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] };print length(tNeed)}' .config
 }
@@ -81,13 +81,13 @@ awk '/^[ \t]*CONFIG_PACKAGE_'$1'[ \t=]*/{gsub("/^[ \t]*CONFIG_PACKAGE_'$1'[ \t=]
 function ld_modcfg()
 {
 make defconfig
-ld_modconfig >>.config
+ld_checkconfig >>.config
 make defconfig
-ld_modconfig >>.config
+ld_checkconfig >>.config
 make defconfig
 }
 
-function ld_modconfig()
+function ld_checkconfig()
 {
     for i in $ldpkg
     do
