@@ -6,7 +6,7 @@
 function ld_updatecmd()
 {
 wget -O /etc/dockerscript https://raw.githubusercontent.com/gzmud/prvscript/master/dockerscript
-. /etc/dockerscript
+. /etc/dockerscript "Update complete"
 }
 
 function _ld_set()
