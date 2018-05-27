@@ -20,7 +20,9 @@ ldmkopt='-j4'
 
 function _ld_gitit()
 {
-test -d $2 && ( pushd $2; git pull ; popd ; exit 1 ) || git clone $1 $2
+	tmpresult=0
+	test -d $2 && ( pushd $2; git pull ; popd ; return 1 ) || git clone $1 $2
+	return $tmpresult
 }
 
 function _ld_getmy()
