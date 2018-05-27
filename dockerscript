@@ -136,7 +136,7 @@ git checkout lede-17.01
 ld_setbcm2710
 ./scripts/feeds update -a
 ./scripts/feeds install -a
-ln -s ~/lede/ bin
+ln -s ~/lede/ ~/s/bin
 _ld_getmy
 }
 
@@ -144,7 +144,7 @@ function ld_run()
 {
 . /usr/share/bash-completion/bash_completion
 cd
-_ld_gitit https://github.com/openwrt/openwrt.git s && ln -s ~/lede/ bin
+_ld_gitit https://github.com/openwrt/openwrt.git s && ln -s ~/lede/ ~/s/bin
 cd s
 #make distclean
 git checkout lede-17.01
