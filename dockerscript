@@ -54,14 +54,14 @@ function ld_make()
 #ld_getsrc
 #ld_update
 ld_modcfg
-ld_kerconf
+ld_kerconf || return $?
 ld_build
 }
 
 function ld_kerconf()
 {
-
 make kernel_menuconfig CONFIG_TARGET=subtarget -j4
+return $?
 }
 
 function _ld_checkcfg()
