@@ -53,17 +53,15 @@ function ld_make()
 {
 #ld_getsrc
 #ld_update
+ld_modcfg
 ld_kerconf
 ld_build
 }
 
 function ld_kerconf()
 {
-make menuconfig
-make defconfig
+
 make kernel_menuconfig CONFIG_TARGET=subtarget -j4
-sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=100/' .config
-sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE\=256/CONFIG_TARGET_ROOTFS_PARTSIZE\=768/' .config
 }
 
 function _ld_checkcfg()
@@ -86,6 +84,8 @@ function ld_modcfg()
 make defconfig
 ld_checkconfig >>.config
 make defconfig
+sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=100/' .config
+sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE\=256/CONFIG_TARGET_ROOTFS_PARTSIZE\=768/' .config
 ld_checkconfig >>.config
 make defconfig
 }
