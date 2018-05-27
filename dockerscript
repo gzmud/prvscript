@@ -68,12 +68,12 @@ function _ld_checkcfg()
 awk -v ldpkg="$ldpkg" 'BEGIN {gsub(/ +/," ",ldpkg);tLen = split(ldpkg,tNeed," ")};{for(k in tNeed ){if ($0 ~ "_"tNeed[k]"=y") {print $0;tHave[k]=tNeed[k];delete tNeed[k] } else if ($0 ~ "_"tNeed[k]" " ){ print "\033[40;33m"$0"\033[0m"} }}; END {for(k in tNeed ){ print tNeed[k] };print length(tNeed)}' .config
 }
 
-function ld_setpkg()
+function _ld_setpkg()
 {
 awk '/^[ \t]*#.*CONFIG_PACKAGE_'$1'[ \t]/{print CONFIG_PACKAGE_'$1'=y}' .config
 }
 
-function ld_getpkg()
+function _ld_getpkg()
 {
 awk '/^[ \t]*CONFIG_PACKAGE_'$1'[ \t=]*/{gsub("/^[ \t]*CONFIG_PACKAGE_'$1'[ \t=]*/","",$0);print CONFIG_PACKAGE_'$1'=y}' .config
 }
@@ -176,7 +176,7 @@ case $1 in
 	ld_run
 	;;
 	?)
-	echo "Unknow CMD" $$ ;;
+	echo "Unknow CMD" $@ ;;
 esac
 }
 
@@ -202,5 +202,5 @@ CONFIG_TARGET_ARCH_PACKAGES="arm_cortex-a53_neon-vfpv4"
 CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mcpu=cortex-a53 -mfpu=neon-vfpv4"'
 }
 
-ld_main $$
+ld_main $@
 #ld_setbcm2710
