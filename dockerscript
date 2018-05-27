@@ -165,19 +165,25 @@ function ld_main()
 {
 case $1 in
 	ld_main)
-	. /usr/share/bash-completion/bash_completion
-	cd
-	_ld_set
-	test -d s && ld_run || ld_runonce
+	{
+		. /usr/share/bash-completion/bash_completion
+		cd
+		_ld_set
+		test -d s && ld_run || ld_runonce
+	}
 	;;
 	ld_run)
-	. /usr/share/bash-completion/bash_completion
-	cd
-	_ld_set
-	ld_run
+	{
+		. /usr/share/bash-completion/bash_completion
+		cd
+		_ld_set
+		ld_run
+	}
 	;;
 	''|ld_updatecmd)
-	echo "ld_updatecmd complete"
+	{
+		echo "ld_updatecmd complete"
+	}
 	;;
 	*)
 	echo "Unknow CMD" $@
