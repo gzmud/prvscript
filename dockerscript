@@ -10,6 +10,13 @@ wget -O /etc/dockerscript https://raw.githubusercontent.com/gzmud/prvscript/mast
 echo "ld_updatecmd complete"
 }
 
+function _ld_updatecmd()
+{
+wget -O dockerscript https://raw.githubusercontent.com/gzmud/prvscript/master/dockerscript
+. dockerscript
+echo "ld_updatecmd complete"
+}
+
 function _ld_set()
 {
 ldpkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net kmod-usb-net-rtl8152 kmod-usb-ohci kmod-usb-storage kmod-usb-hid kmod-usb2 kmod-fs-vfat kmod-fs-ext4 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libssh2 libcares libstdcpp libmbedtls coreutils coreutils-base64 ca-certificates ca-bundle bind-dig mtd mount-utils block-mount ntfs-3g-utils minidlna samba36-server miniupnpd shadow-utils
@@ -17,7 +24,7 @@ shadow-useradd usbutils luci-app-minidlna luci-i18n-minidlna-zh-cn luci-app-samb
 ldmyipk='aria2 webui-aria2 yaaw'
 #lddir=$(readlink -f .)
 ldmkopt='-j4'
-ldbrach='lede-17.01'
+ldbrach='master'
 }
 
 function _ld_gitit()
