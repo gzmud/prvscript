@@ -30,7 +30,7 @@ ldbrach='master'
 function _ld_gitit()
 {
 	tmpresult=0
-	test -d $2 && ( pushd $2; git pull ; popd ; return 1 ) || git clone $1 $2
+	test -d $2 && ( pushd $2; git pull ; popd ; tmpresult=1 ) || git clone $1 $2
 	return $tmpresult
 }
 
