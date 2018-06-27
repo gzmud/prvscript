@@ -138,6 +138,14 @@ function ld_savecfg()
     popd
 }
 
+function _ld_addsrc()
+{
+	#src-git rtndev https://github.com/Entware/rtndev.git
+	#src-git rtndev https://github.com/gzmud/rtndev.git
+	sed -i '/ rtndev /d' feeds.conf.default
+	echo 'src-git rtndev https://github.com/gzmud/rtndev.git' >> feeds.conf.default
+}
+
 function _ld_runonce()
 {
 test -d s && return 0
@@ -146,6 +154,7 @@ _ld_gitit https://github.com/openwrt/openwrt.git s
 cd s
 git checkout $ldbrach
 ld_setbcm2710
+_ld_addsrc
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 #ln -s ~/lede/ ~/s/bin
@@ -162,6 +171,7 @@ cd s
 git checkout $ldbrach
 git pull
 ld_setbcm2710
+_ld_addsrc
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 _ld_getmy
