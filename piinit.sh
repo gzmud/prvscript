@@ -4,7 +4,11 @@
 #
 function picmd_updatecmd()
 {
+pushd ~
+git clone https://github.com/gzmud/prvscript.git
+popd
 pushd ~/prvscript
+
 git pull
 . piinit.sh
 popd
