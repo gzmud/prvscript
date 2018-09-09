@@ -45,6 +45,7 @@ apt-get install -y -q nano \
      curl \
      gnupg2 \
      python-pip \
+     udisks2 \
      bash-completion
 }
 
@@ -69,7 +70,7 @@ function picmd_postinstalldocker()
 #2018.9.8 by gzmud
 groupadd docker
 usermod -aG docker $USER
-systemctl enable docker
+#systemctl enable docker
 }
 
 
@@ -107,15 +108,32 @@ function picmd_nextcloudpidocker()
 #newgrp docker
 #modify  /lib/systemd/system/docker.service
 #ExecStart=/usr/bin/dockerd -g /media/USBdrive/docker -H fd://
-#systemctl daemon-reload
-#systemctl restart docker
+#sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=100/' .config
+
+#Change Docker data directory on Debian – Random thoughts
+echo '{
+  "data-root": "/media/sda/docker"
+}' > /etc/docker/daemon.json
+systemctl daemon-reload
+systemctl restart docker
 #docker info | grep Root
 #DOMAIN=192.168.1.130        # example for allowing an IP
 #DOMAIN=myclouddomain.net    # example for allowing a domain
 #docker run -d -p 443:443 -p 80:80 -v ncdata:/data --name nextcloudpi ownyourbits/nextcloudpi $DOMAIN
 
 #https://ownyourbits.com/2017/11/15/nextcloudpi-dockers-for-x86-and-arm/
+cd ~
+git clone git clone https://github.com/nextcloud/nextcloudpi.git
+IP="192.168.1.170" docker-compose -f docker-compose-armhf.yml up -d
+}
 
-echo
-
+function picmd_hotplug()
+{
+  #make auto mount usb disk
+  #ref https://blog.csdn.net/taiyang1987912/article/details/46985343
+  #2018.9.8 by gzmud
+  #to /etc/udev/rules.d/10-usbstorage.rules
+  #apt-get install -y -q udisks2
+  # fail function
+  echo
 }
