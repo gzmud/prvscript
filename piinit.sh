@@ -7,8 +7,8 @@ function picmd_updatecmd()
 pushd ~
 git clone https://github.com/gzmud/prvscript.git
 popd
-pushd ~/prvscript
 
+pushd ~/prvscript
 git pull
 . piinit.sh
 popd
@@ -116,5 +116,6 @@ function picmd_nextcloudpidocker()
 
 #https://ownyourbits.com/2017/11/15/nextcloudpi-dockers-for-x86-and-arm/
 
+echo
 
 }
