@@ -135,5 +135,11 @@ function picmd_hotplug()
   #to /etc/udev/rules.d/10-usbstorage.rules
   #apt-get install -y -q udisks2
   # fail function
-  echo
+  #same as udevcontrol reload_rules 50-udev-default.rules
+  echo '# UDISKS_FILESYSTEM_SHARED
+# ==1: mount filesystem to a shared directory (/media/VolumeName)
+# ==0: mount filesystem to a private directory (/run/media/$USER/VolumeName)
+# See udisks(8)
+ENV{ID_FS_USAGE}=="filesystem|other|crypto", ENV{UDISKS_FILESYSTEM_SHARED}="1"' \
+> /etc/udev/rules.d/79-udisks2.rules
 }
