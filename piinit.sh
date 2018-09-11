@@ -2,6 +2,19 @@
 #
 #raspberry pi  raspbian init cmd
 #
+
+function picmd_help ()
+{
+cat << EOF
+private script
+
+Usage:
+
+wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/piinit.sh -O piinit.sh
+. piinit.sh
+EOF
+}
+
 function picmd_updatecmd()
 {
 pushd ~
@@ -142,4 +155,52 @@ function picmd_hotplug()
 # See udisks(8)
 ENV{ID_FS_USAGE}=="filesystem|other|crypto", ENV{UDISKS_FILESYSTEM_SHARED}="1"' \
 > /etc/udev/rules.d/79-udisks2.rules
+echo '# udisks2 automount rule by gzmud
+KERNEL!="loop*|mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|nvme*|sd*|sr*|vd*|xvd*|bcache*|cciss*|dasd*|ubd*|scm*|pmem*|nbd*", GOTO="media_by_label_auto_mount_end"
+SUBSYSTEM!="block", GOTO="media_by_label_auto_mount_end"
+
+ACTION=="add", PROGRAM+="/usr/bin/udisksctl mount  --no-user-interaction -b %N"
+# Exit
+LABEL="media_by_label_auto_mount_end"' \
+> /etc/udev/rules.d/81-automount-udisks2.rules
+  #cp /lib/systemd/system/systemd-udevd.service /etc/systemd/system/
+  # sed -i 's/MountFlags=slave/MountFlags=shared/g' /etc/systemd/system/systemd-udevd.service
+}
+
+function picmd_hotplug_udev()
+{
+  echo 'KERNEL!="loop*|mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|nvme*|sd*|sr*|vd*|xvd*|bcache*|cciss*|dasd*|ubd*|scm*|pmem*|nbd*", GOTO="media_by_label_auto_mount_end"
+  SUBSYSTEM!="block", GOTO="media_by_label_auto_mount_end"
+# Import FS infos
+IMPORT{program}="/sbin/blkid -o udev -p %N"
+# Get a label if present, otherwise specify one
+ENV{dir_name}="usb-%k"
+ENV{ID_FS_UUID}!="", ENV{dir_name}="%E{ID_FS_UUID}"
+ENV{ID_FS_LABEL}!="", ENV{dir_name}="%E{ID_FS_LABEL}"
+
+# Global mount options
+ACTION=="add", ENV{mount_options}="relatime"
+# Filesystem-specific mount options
+# 如果是vfat 或者ntfs 系统，则设置mount_options 的选项如下
+ACTION=="add", ENV{ID_FS_TYPE}=="vfat|ntfs", ENV{mount_options}="$env{mount_options},utf8,gid=100,umask=000"
+# Mount the device
+#  如果文件系统不是ntfs ,意味着是vfat
+# 同时挂载到/mnt/dir_name 的形式
+ACTION=="add",ENV{ID_FS_TYPE}=="vfat", PROGRAM+="/bin/mkdir -p /mnt/$env{dir_name}", PROGRAM+="/bin/mount -o $env{mount_options},rw /dev/%k /mnt/$env{dir_name}"
+#ntfs
+#  如果文件系统是ntfs ,以ntfs-3g 的形式挂载，实现可读写
+# 同时挂载到/mnt/dir_name的形式
+ACTION=="add",ENV{ID_FS_TYPE}=="ntfs", PROGRAM+="/bin/mkdir -p /mnt/$env{dir_name}", PROGRAM+="/bin/mount -t ntfs-3g -o $env{mount_options},rw /dev/%k /mnt/$env{dir_name}"
+
+#  如果文件系统是其他,以 -t auto 的形式挂载，实现可读写
+# 同时挂载到/mnt/usb-%k的形式
+ACTION=="add",ENV{ID_FS_TYPE}!="vfat|ntfs", PROGRAM+="/bin/mkdir -p /mnt/$env{dir_name}", PROGRAM+="/bin/mount -t auto -o $env{mount_options},rw /dev/%k /mnt/$env{dir_name}"
+# Clean up after removal
+#
+ACTION=="remove", ENV{dir_name}!="", PROGRAM+="/bin/umount -l /mnt/$env{dir_name}",  PROGRAM+="/bin/rmdir /mnt/$env{dir_name}" ,  PROGRAM+="/bin/rm /mnt/$env{dir_name}"
+
+# Exit
+LABEL="media_by_label_auto_mount_end"' \
+ > /etc/udev/rules.d/81-hhh_usb.rules
+
 }
