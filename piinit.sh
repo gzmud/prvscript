@@ -12,7 +12,18 @@ Usage:
 
 wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/piinit.sh -O piinit.sh
 . piinit.sh
+
 EOF
+}
+
+function picmd_auto() {
+  #statements
+  picmd_initapt
+  picmd_installwebmin
+  picmd_postinstalldocker
+  picmd_installdocker
+  picmd_hotplug2
+  picmd_rcmod
 }
 
 function picmd_updatecmd()
@@ -159,12 +170,13 @@ echo '# udisks2 automount rule by gzmud
 KERNEL!="loop*|mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|nvme*|sd*|sr*|vd*|xvd*|bcache*|cciss*|dasd*|ubd*|scm*|pmem*|nbd*", GOTO="media_by_label_auto_mount_end"
 SUBSYSTEM!="block", GOTO="media_by_label_auto_mount_end"
 
-ACTION=="add", PROGRAM+="/usr/bin/udisksctl mount  --no-user-interaction -b %N"
+ACTION=="add", PROGRAM+="/usr/bin/udisksctl mount --no-user-interaction -b %N"
 # Exit
 LABEL="media_by_label_auto_mount_end"' \
 > /etc/udev/rules.d/81-automount-udisks2.rules
-  #cp /lib/systemd/system/systemd-udevd.service /etc/systemd/system/
-  # sed -i 's/MountFlags=slave/MountFlags=shared/g' /etc/systemd/system/systemd-udevd.service
+  cp /lib/systemd/system/systemd-udevd.service /etc/systemd/system/
+  sed -i 's/MountFlags=slave/MountFlags=shared/g' /etc/systemd/system/systemd-udevd.service
+  #/etc/polkit-1/localauthority/50-local.d/org.freedesktop.udisks2.pkla
 }
 
 function picmd_hotplug_udev()
@@ -172,7 +184,7 @@ function picmd_hotplug_udev()
   echo 'KERNEL!="loop*|mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|nvme*|sd*|sr*|vd*|xvd*|bcache*|cciss*|dasd*|ubd*|scm*|pmem*|nbd*", GOTO="media_by_label_auto_mount_end"
   SUBSYSTEM!="block", GOTO="media_by_label_auto_mount_end"
 # Import FS infos
-IMPORT{program}="/sbin/blkid -o udev -p %N"
+IMPORT{program}="blkid -o udev -p %N"
 # Get a label if present, otherwise specify one
 ENV{dir_name}="usb-%k"
 ENV{ID_FS_UUID}!="", ENV{dir_name}="%E{ID_FS_UUID}"
@@ -186,15 +198,15 @@ ACTION=="add", ENV{ID_FS_TYPE}=="vfat|ntfs", ENV{mount_options}="$env{mount_opti
 # Mount the device
 #  如果文件系统不是ntfs ,意味着是vfat
 # 同时挂载到/mnt/dir_name 的形式
-ACTION=="add",ENV{ID_FS_TYPE}=="vfat", PROGRAM+="/bin/mkdir -p /mnt/$env{dir_name}", PROGRAM+="/bin/mount -o $env{mount_options},rw /dev/%k /mnt/$env{dir_name}"
+ACTION=="add",ENV{ID_FS_TYPE}=="vfat", PROGRAM+="/bin/mkdir -p /mnt/$env{dir_name}", PROGRAM+="/bin/mount -o $env{mount_options},rw %N /mnt/$env{dir_name}"
 #ntfs
 #  如果文件系统是ntfs ,以ntfs-3g 的形式挂载，实现可读写
 # 同时挂载到/mnt/dir_name的形式
-ACTION=="add",ENV{ID_FS_TYPE}=="ntfs", PROGRAM+="/bin/mkdir -p /mnt/$env{dir_name}", PROGRAM+="/bin/mount -t ntfs-3g -o $env{mount_options},rw /dev/%k /mnt/$env{dir_name}"
+ACTION=="add",ENV{ID_FS_TYPE}=="ntfs", PROGRAM+="/bin/mkdir -p /mnt/$env{dir_name}", PROGRAM+="/bin/mount -t ntfs-3g -o $env{mount_options},rw %N /mnt/$env{dir_name}"
 
 #  如果文件系统是其他,以 -t auto 的形式挂载，实现可读写
-# 同时挂载到/mnt/usb-%k的形式
-ACTION=="add",ENV{ID_FS_TYPE}!="vfat|ntfs", PROGRAM+="/bin/mkdir -p /mnt/$env{dir_name}", PROGRAM+="/bin/mount -t auto -o $env{mount_options},rw /dev/%k /mnt/$env{dir_name}"
+# 同时挂载到/mnt/dir_name的形式
+ACTION=="add",ENV{ID_FS_TYPE}!="vfat|ntfs", PROGRAM+="/bin/mkdir -p /mnt/$env{dir_name}", PROGRAM+="/bin/mount -t auto -o $env{mount_options},rw %N /mnt/$env{dir_name}"
 # Clean up after removal
 #
 ACTION=="remove", ENV{dir_name}!="", PROGRAM+="/bin/umount -l /mnt/$env{dir_name}",  PROGRAM+="/bin/rmdir /mnt/$env{dir_name}" ,  PROGRAM+="/bin/rm /mnt/$env{dir_name}"
@@ -203,4 +215,94 @@ ACTION=="remove", ENV{dir_name}!="", PROGRAM+="/bin/umount -l /mnt/$env{dir_name
 LABEL="media_by_label_auto_mount_end"' \
  > /etc/udev/rules.d/81-hhh_usb.rules
 
+}
+
+function picmd_hotplug2()
+{
+# base op
+  cp /lib/systemd/system/systemd-udevd.service /etc/systemd/system/
+  sed -i 's/MountFlags=slave/MountFlags=shared/g' /etc/systemd/system/systemd-udevd.service
+cat <<EOF  > /etc/udev/rules.d/81-usbautomount.rules
+KERNEL!="loop*|mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|nvme*|sd*|sr*|vd*|xvd*|bcache*|cciss*|dasd*|ubd*|scm*|pmem*|nbd*", GOTO="media_by_label_auto_mount_end"
+SUBSYSTEM!="block", GOTO="media_by_label_auto_mount_end"
+ACTION!="add", GOTO="media_by_label_auto_mount_end"
+ENV{ID_BUS}!="usb", GOTO="media_by_label_auto_mount_end"
+ENV{DEVTYPE}=="disk", ENV{ID_PART_TABLE_TYPE}!="" ,  GOTO="media_by_label_auto_mount_end"
+ENV{DEVTYPE}!="disk|partition", GOTO="media_by_label_auto_mount_end"
+
+LABEL="media_by_label_auto_mount_start"
+# Import FS infos
+IMPORT{program}="/sbin/blkid -o udev -p %N"
+# Get a label if present, otherwise specify one
+ENV{dir_name}="usb-%k"
+ENV{ID_FS_UUID}!="", ENV{dir_name}="%E{ID_FS_UUID}"
+ENV{ID_FS_LABEL}!="", ENV{dir_name}="%E{ID_FS_LABEL}"
+
+# Global mount options
+ENV{mount_options}="relatime"
+#  如果文件系统是其他,以 -t auto 的形式挂载，实现可读写
+# 同时挂载到/mnt/dir_name的形式
+PROGRAM+="/bin/mkdir -p /media/%E{dir_name}"
+PROGRAM+="/bin/mount -t auto -o rw %N /media/%E{dir_name}"
+
+# Exit
+LABEL="media_by_label_auto_mount_end"
+EOF
+
+cat <<EOF > /etc/udev/rules.d/81-autounclean.rules
+KERNEL!="loop*|mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|nvme*|sd*|sr*|vd*|xvd*|bcache*|cciss*|dasd*|ubd*|scm*|pmem*|nbd*", GOTO="media_by_label_auto_unmount_end"
+SUBSYSTEM!="block", GOTO="media_by_label_auto_unmount_end"
+ACTION!="remove", GOTO="media_by_label_auto_unmount_start"
+ENV{ID_BUS}!="usb", GOTO="media_by_label_auto_unmount_end"
+ENV{DEVTYPE}=="disk", ENV{ID_PART_TABLE_TYPE}!="" , GOTO="media_by_label_auto_unmount_end"
+ENV{DEVTYPE}!="disk|partition", GOTO="media_by_label_auto_unmount_end"
+
+LABEL="media_by_label_auto_unmount_start"
+# Import FS infos
+# Clean up after removal
+#
+PROGRAM+="/bin/sh -c '/bin/cat /proc/mounts | /bin/grep %N'"
+ENV{mountdir}="%c{2}"
+ENV{mountdir}!="" , PROGRAM+="/bin/umount %E{mountdir}" , PROGRAM+="/bin/rmdir %E{mountdir}"
+ENV{mountdir}=="" , ENV{dir_name}!="" , PROGRAM+="/bin/rmdir /media/%E{dir_name}"
+
+LABEL="media_by_label_auto_unmount_end"
+EOF
+}
+
+function picmd_rcmoddebug()
+{
+  for blk in /sys/class/block/*
+  do
+     dev=${blk##*/}
+     #for argvs in `udevadm info  -q property -p $blk | grep = | awk '{print "'$dev'_" $1}'`
+     for argvs in `udevadm info  -q property -p $blk | grep ID_BUS=usb | awk '{print "'$dev'_" $1}'`
+     do
+       #declare $argvs
+       echo $dev $argvs
+     done
+      #echo `eval echo '$'"$dev"_ID_BUS`
+  done
+}
+
+function picmd_rcmod()
+{
+mkdir -p /root/script/
+sed -i '/\/root\/script\/rcmod\.sh/d' /etc/rc.local
+echo '. /root/script/rcmod.sh' >>/etc/rc.local
+cat <<EOF > /root/script/rcmod.sh
+  #!/bin/bash
+  #
+  #rcscript
+  rmdir /media/*
+  for blk in /sys/class/block/*
+  do
+     dev=${blk##*/}
+     for argvs in `udevadm info  -q property -p $blk | grep ID_BUS=usb | awk '{print "'$dev'_" $1}'`
+     do
+       udevadm test -a add $(udevadm info -q path -n $dev)
+     done
+  done
+EOF
+chmod +x /root/script/rcmod.sh
 }
