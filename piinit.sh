@@ -240,10 +240,11 @@ ENV{ID_FS_LABEL}!="", ENV{dir_name}="%E{ID_FS_LABEL}"
 
 # Global mount options
 ENV{mount_options}="relatime"
+ENV{ID_FS_TYPE}=="vfat|ntfs", ENV{mount_options}="%E{mount_options},utf8,gid=100,umask=000"
 #  如果文件系统是其他,以 -t auto 的形式挂载，实现可读写
 # 同时挂载到/mnt/dir_name的形式
 PROGRAM+="/bin/mkdir -p /media/%E{dir_name}"
-PROGRAM+="/bin/mount -t auto -o rw %N /media/%E{dir_name}"
+PROGRAM+="/bin/mount -t auto -o %E{mount_options},rw %N /media/%E{dir_name}"
 
 # Exit
 LABEL="media_by_label_auto_mount_end"
@@ -297,10 +298,10 @@ cat <<EOF > /root/script/rcmod.sh
   rmdir /media/*
   for blk in /sys/class/block/*
   do
-     dev=${blk##*/}
-     for argvs in `udevadm info  -q property -p $blk | grep ID_BUS=usb | awk '{print "'$dev'_" $1}'`
+     dev=\${blk##*/}
+     for argvs in \`udevadm info  -q property -p \$blk | grep ID_BUS=usb | awk '{print "'\$dev'_" $1}'\`
      do
-       udevadm test -a add $(udevadm info -q path -n $dev)
+       udevadm test -a add \`udevadm info -q path -n \$dev\`
      done
   done
 EOF
