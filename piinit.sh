@@ -22,6 +22,10 @@ screen -dmS apt -t w
 screen -r apt -p w -X stuff 'pushd ~
 git clone https://github.com/gzmud/prvscript.git
 popd
+pushd ~/prvscript
+git pull
+. piinit.sh
+popd
 picmd_auto
 '
 screen -r apt
