@@ -16,6 +16,17 @@ wget --cache=off --no-cache https://raw.github.com/gzmud/prvscript/master/piinit
 EOF
 }
 
+function picmd_scrauto() {
+  #statements
+screen -dmS apt -t w
+screen -r apt -p w -X stuff 'pushd ~
+git clone https://github.com/gzmud/prvscript.git
+popd
+picmd_auto
+'
+screen -r apt 
+}
+
 function picmd_auto() {
   #statements
   picmd_initapt
