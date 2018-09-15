@@ -24,7 +24,7 @@ git clone https://github.com/gzmud/prvscript.git
 popd
 picmd_auto
 '
-screen -r apt 
+screen -r apt
 }
 
 function picmd_auto() {
