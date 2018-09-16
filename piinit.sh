@@ -150,19 +150,25 @@ function picmd_nextcloudpidocker()
 #sed -i 's/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=20/CONFIG_BRCM2708_SD_BOOT_PARTSIZE\=100/' .config
 
 #Change Docker data directory on Debian – Random thoughts
+docker_root_new=/media/storage/docker
+docker_root_old=`(docker info  2> /dev/null) | awk '/Root/{print $4}'`
+systemctl stop docker
+mkdir -p $docker_root_new
+cp -r $docker_root_old/* $docker_root_new
 echo '{
-  "data-root": "/media/sda/docker"
+  "data-root": "'$docker_root_new'"
 }' > /etc/docker/daemon.json
 systemctl daemon-reload
 systemctl restart docker
 #docker info | grep Root
 #DOMAIN=192.168.1.130        # example for allowing an IP
 #DOMAIN=myclouddomain.net    # example for allowing a domain
-#docker run -d -p 443:443 -p 80:80 -v ncdata:/data --name nextcloudpi ownyourbits/nextcloudpi $DOMAIN
+#docker run -d -p 443:443 -p 80:80 -v ncdata:/data --name nextcloudpi ownyourbits/nextcloudpi-armhf $DOMAIN
 
 #https://ownyourbits.com/2017/11/15/nextcloudpi-dockers-for-x86-and-arm/
 cd ~
-git clone git clone https://github.com/nextcloud/nextcloudpi.git
+git clone https://github.com/nextcloud/nextcloudpi.git
+cd nextcloudpi
 IP="192.168.1.170" docker-compose -f docker-compose-armhf.yml up -d
 }
 
@@ -252,14 +258,17 @@ IMPORT{program}="/sbin/blkid -o udev -p %N"
 ENV{dir_name}="usb-%k"
 ENV{ID_FS_UUID}!="", ENV{dir_name}="%E{ID_FS_UUID}"
 ENV{ID_FS_LABEL}!="", ENV{dir_name}="%E{ID_FS_LABEL}"
+ENV{fs_type}="auto"
 
 # Global mount options
 ENV{mount_options}="relatime"
-ENV{ID_FS_TYPE}=="vfat|ntfs", ENV{mount_options}="%E{mount_options},utf8,gid=100,umask=000"
+PROGRAM+="/bin/mkdir -p /media/%E{dir_name}",PROGRAM+="/bin/chmod 0766 /media/%E{dir_name}"
+
+ENV{ID_FS_TYPE}=="vfat|ntfs", ENV{mount_options}="%E{mount_options},utf8,gid=100,umask=000" , ENV{fs_type}=ENV{ID_FS_TYPE}
+ENV{ID_FS_TYPE}!="vfat|ntfs", ENV{mount_options}="%E{mount_options},noatime"
 #  如果文件系统是其他,以 -t auto 的形式挂载，实现可读写
 # 同时挂载到/mnt/dir_name的形式
-PROGRAM+="/bin/mkdir -p /media/%E{dir_name}"
-PROGRAM+="/bin/mount -t auto -o %E{mount_options},rw %N /media/%E{dir_name}"
+PROGRAM+="/bin/mount -t %E{fs_type} -o %E{mount_options},rw %N /media/%E{dir_name}"
 
 # Exit
 LABEL="media_by_label_auto_mount_end"
@@ -268,7 +277,7 @@ EOF
 cat <<EOF > /etc/udev/rules.d/81-autounclean.rules
 KERNEL!="loop*|mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|nvme*|sd*|sr*|vd*|xvd*|bcache*|cciss*|dasd*|ubd*|scm*|pmem*|nbd*", GOTO="media_by_label_auto_unmount_end"
 SUBSYSTEM!="block", GOTO="media_by_label_auto_unmount_end"
-ACTION!="remove", GOTO="media_by_label_auto_unmount_start"
+ACTION!="remove", GOTO="media_by_label_auto_unmount_end"
 ENV{ID_BUS}!="usb", GOTO="media_by_label_auto_unmount_end"
 ENV{DEVTYPE}=="disk", ENV{ID_PART_TABLE_TYPE}!="" , GOTO="media_by_label_auto_unmount_end"
 ENV{DEVTYPE}!="disk|partition", GOTO="media_by_label_auto_unmount_end"
