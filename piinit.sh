@@ -37,7 +37,7 @@ function picmd_auto() {
   picmd_installwebmin
   picmd_postinstalldocker
   picmd_installdocker
-  picmd_hotplug2
+  #picmd_hotplug2
   picmd_rcmod
 }
 
@@ -330,4 +330,49 @@ cat <<EOF > /root/script/rcmod.sh
   done
 EOF
 chmod +x /root/script/rcmod.sh
+}
+
+function picmd_fixncautomount() {
+  #fix nc_automount
+  test -e /usr/local/etc/nc-automount-links.bak || \
+  cp /usr/local/etc/nc-automount-links /usr/local/etc/nc-automount-links.bak
+  sed -i 's/test -L \/media\/"$l"/\( test -L \/media\/"$l" \&\& ! test -d \/media\/"$l" \)/' \
+  /usr/local/etc/nc-automount-links
+  #cat /usr/local/etc/nc-automount-links | \
+  #sed 's/test -L \/media\/"$l"/\( test -L \/media\/"$l" \&\& ! test -d \/media\/"$l" \)/'
+cat <<EOF >/usr/local/etc/nc-automount-links-mon.h
+#!/bin/bash
+function linkproc()
+{
+#echo $1 for $2
+if [ "$2" == "CREATE" ] ; then
+	islinked $1 || makelink $1
+fi
+}
+
+function islinked()
+{
+tmres=`ls -od /media/* | awk '$9 ~/->/ && $10 ~/\media\/'$1'$/ {print $10}'`
+test -n "$tmres"
+return $?
+}
+
+function makelink()
+{
+ # create links
+  test -e /media/USBdrive || { ln -sT "/media/$1" /media/USBdrive ; return ; }
+  # create links
+  for((i=1;i<=10;i++));do
+    test -e /media/USBdrive$i || { ln -sT "/media/$1" /media/USBdrive$i ; return ; }
+  done
+}
+EOF
+sed -i 's/#!\/bin\/bash$/#!\/bin\/bash\/n\' \
+/usr/local/etc/nc-automount-links-mon
+  test -e /usr/local/etc/nc-automount-links-mon.bak || \
+  cp /usr/local/etc/nc-automount-links-mon /usr/local/etc/nc-automount-links-mon.bak
+  sed -i '/#!\/bin\/bash/{s/$/\n\n. \/usr\/local\/etc\/nc-automount-links-mon\.h\n\n/;:f;n;b f;}'
+  /usr/local/etc/nc-automount-links-mon
+   sed -i 's/\([ \t]*\)\([^ \t]*nc-automount-links\)/\1#\2\n\1linkproc ${f%,*}/' \
+  /usr/local/etc/nc-automount-links-mon
 }
