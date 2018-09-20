@@ -31,6 +31,14 @@ picmd_auto
 screen -r apt
 }
 
+unction pinc_auto() {
+  #statements
+  #picmd_hotplug2
+  #picmd_rcmod
+  #there is some other way for automount
+  echo pinc_auto
+}
+
 function picmd_auto() {
   #statements
   picmd_initapt
@@ -38,7 +46,8 @@ function picmd_auto() {
   picmd_postinstalldocker
   picmd_installdocker
   #picmd_hotplug2
-  picmd_rcmod
+  #picmd_rcmod
+  #there is some other way for automount
 }
 
 function picmd_updatecmd()
@@ -332,14 +341,16 @@ EOF
 chmod +x /root/script/rcmod.sh
 }
 
-function picmd_fixncautomount() {
-  #fix nc_automount
+function pinc_fixncautomount() {
+  #fix nc-automount-links don;t remove ln
   test -e /usr/local/etc/nc-automount-links.bak || \
   cp /usr/local/etc/nc-automount-links /usr/local/etc/nc-automount-links.bak
   sed -i 's/test -L \/media\/"$l"/\( test -L \/media\/"$l" \&\& ! test -d \/media\/"$l" \)/' \
   /usr/local/etc/nc-automount-links
   #cat /usr/local/etc/nc-automount-links | \
   #sed 's/test -L \/media\/"$l"/\( test -L \/media\/"$l" \&\& ! test -d \/media\/"$l" \)/'
+
+  #fix nc-automount-links-mon
 cat <<EOF >/usr/local/etc/nc-automount-links-mon.h
 #!/bin/bash
 function linkproc()
@@ -367,6 +378,7 @@ function makelink()
   done
 }
 EOF
+
 sed -i 's/#!\/bin\/bash$/#!\/bin\/bash\/n\' \
 /usr/local/etc/nc-automount-links-mon
   test -e /usr/local/etc/nc-automount-links-mon.bak || \
@@ -375,4 +387,26 @@ sed -i 's/#!\/bin\/bash$/#!\/bin\/bash\/n\' \
   /usr/local/etc/nc-automount-links-mon
    sed -i 's/\([ \t]*\)\([^ \t]*nc-automount-links\)/\1#\2\n\1linkproc ${f%,*}/' \
   /usr/local/etc/nc-automount-links-mon
+
+mkdir /etc/udiskie/
+cat <<EOF >/etc/udiskie/config.yml
+device_config:
+- id_type: vfat
+  options: [noexec, nodev , umask=0000 ]
+EOF
+#cat /usr/lib/systemd/system/nc-automount.service | \
+sed -i "s/ExecStart=\/usr\/bin\/udiskie -NTF/ExecStart=\/usr\/bin\/udiskie -NTF2v -c \/etc\/udisie\/config.yml/g" /usr/lib/systemd/system/nc-automount.service
+
 }
+
+function pinc_updateudiskie() {
+  version_ge `udiskie -V | awk '{print $2}'` 1.7.4 && return
+  easy_install pip pip3
+  pip3 uninstall udiskie
+  pip3 install udiskie
+}
+
+function version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"; }
+function version_le() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" == "$1"; }
+function version_lt() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" != "$1"; }
+function version_ge() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" == "$1"; }
