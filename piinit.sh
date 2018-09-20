@@ -395,7 +395,7 @@ device_config:
   options: [noexec, nodev , umask=0000 ]
 EOF
 #cat /usr/lib/systemd/system/nc-automount.service | \
-sed -i "s/ExecStart=\/usr\/bin\/udiskie -NTF/ExecStart=\/usr\/bin\/udiskie -NTF2v -c \/etc\/udisie\/config.yml/g" /usr/lib/systemd/system/nc-automount.service
+sed -i "s/ExecStart=\/usr\/bin\/udiskie -NTF/ExecStart=\/usr\/local\/bin\/udiskie -NTF2v -c \/etc\/udiskie\/config.yml/g" /usr/lib/systemd/system/nc-automount.service
 
 }
 
