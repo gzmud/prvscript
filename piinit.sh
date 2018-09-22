@@ -94,7 +94,8 @@ apt-get install -y -q nano \
      gnupg2 \
      python-pip \
      udisks2 \
-     bash-completion
+     bash-completion \
+     smartmontools
 }
 
 function picmd_installwebmin()
@@ -374,7 +375,7 @@ function makelink()
   test -e /media/USBdrive || { ln -sT "/media/$1" /media/USBdrive ; return ; }
   # create links
   for((i=1;i<=10;i++));do
-    test -e /media/USBdrive$i || { ln -sT "/media/$1" /media/USBdrive$i ; return ; }
+    test -h /media/USBdrive$i || { ln -sT "/media/$1" /media/USBdrive$i ; return ; }
   done
 }
 EOF
@@ -410,3 +411,11 @@ function version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" 
 function version_le() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" == "$1"; }
 function version_lt() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" != "$1"; }
 function version_ge() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" == "$1"; }
+
+function pinc_startbbr() {
+echo try star bbr
+}
+
+function pinc_getrealip(){
+  dig +short myip.opendns.com @resolver1.opendns.com
+}
