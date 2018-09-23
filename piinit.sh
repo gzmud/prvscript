@@ -392,7 +392,14 @@ sed -i 's/#!\/bin\/bash$/#!\/bin\/bash\/n\' \
 mkdir /etc/udiskie/
 cat <<EOF >/etc/udiskie/config.yml
 device_config:
+
 - id_type: vfat
+  options: [noexec, nodev , umask=0000 ]
+
+- id_type: ntfs
+  options: [ umask=0000 ]
+
+- id_type: exfat
   options: [noexec, nodev , umask=0000 ]
 EOF
 #cat /usr/lib/systemd/system/nc-automount.service | \
@@ -413,9 +420,119 @@ function version_lt() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)"
 function version_ge() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" == "$1"; }
 
 function pinc_startbbr() {
-echo try star bbr
+#echo try star bbr
+echo 'net.core.default_qdisc=fq
+net.ipv4.tcp_allowed_congestion_control="bbr cubic reno"
+net.ipv4.tcp_available_congestion_control="bbr cubic reno"
+net.ipv4.tcp_congestion_control=bbr
+net.ipv4.tcp_wmem="4096 65536 67108864"' >> /etc/sysctl.conf
+echo 'net.core.default_qdisc=fq
+net.ipv4.tcp_allowed_congestion_control="bbr cubic reno"
+net.ipv4.tcp_available_congestion_control="bbr cubic reno"
+net.ipv4.tcp_congestion_control=bbr
+net.ipv4.tcp_wmem="4096 65536 67108864"' >> /etc/sysctl.d/99-zbbr.conf
+sysctl -p
 }
 
 function pinc_getrealip(){
   dig +short myip.opendns.com @resolver1.opendns.com
+}
+
+function pinc_joinfrp(){
+cat <<EOF > /usr/lib/systemd/system/FRP-Client.service
+[Unit]
+Description=FRP-Client
+After=network-online.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/frpc -c  /usr/local/frps/frpc.ini
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=graphical.target
+EOF
+
+cat <<EOF > /usr/local/frps/frpc.ini
+# [common] is integral section
+[common]
+# A literal address or host name for IPv6 must be enclosed
+# in square brackets, as in "[::1]:80", "[ipv6-host]:http" or "[ipv6-host%zone]:80"
+server_addr = n9.sdmud.tk
+server_port = 5443
+
+# for authentication
+token = qwkEOJeG2VScFbOX
+
+# connections will be established in advance, default value is zero
+pool_count = 5
+
+# if tcp stream multiplexing is used, default is true, it must be same with frps
+tcp_mux = true
+
+# your proxy name will be changed to {user}.{proxy}
+user = admin
+
+# decide if exit program when first login failed, otherwise continuous relogin to frps
+# default is true
+login_fail_exit = false
+
+# console or real logFile path like ./frpc.log
+log_file = ./frpc.log
+# trace, debug, info, warn, error
+log_level = info
+log_max_days = 3
+
+# communication protocol used to connect to server
+# now it supports tcp and kcp, default is tcp
+protocol = tcp
+
+# Resolve your domain names to [server_addr] so you can use http://web01.yourdomain.com to browse web01 and http://web02.yourdomain.com to browse web02
+[webmin]
+type = tcp
+#local_ip = 192.168.1.130
+local_port = 10000
+
+remote_port = 9000
+
+#use_encryption = true
+#use_compression = true
+custom_domains = n9.sdmud.tk
+
+[web]
+type =http
+local_ip = 192.168.1.130
+local_port = 80
+custom_domains = n9.sdmud.tk
+
+
+[web2]
+type =https
+local_ip = 192.168.1.130 
+local_port = 443
+custom_domains = n9.sdmud.tk
+
+
+#[web3]
+#type =https
+#local_ip = 192.168.1.130 
+#local_port = 4443
+#custom_domains = n9.sdmud.tk
+EOF
+
+frptar='https://github.com/fatedier/frp/releases/download/v0.21.0/frp_0.21.0_linux_arm.tar.gz'
+
+pushd ~
+mkdir -p frp
+pushd frp
+wget $frptar
+tar xvf frp_0.21.0_linux_arm.tar.gz
+cp frpc /usr/bin/
+chmod +xxx /usr/bin/frpc
+popd
+popd
 }
