@@ -31,7 +31,7 @@ picmd_auto
 screen -r apt
 }
 
-unction pinc_auto() {
+function pinc_auto() {
   #statements
   #picmd_hotplug2
   #picmd_rcmod
