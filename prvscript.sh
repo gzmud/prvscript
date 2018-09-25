@@ -7,7 +7,7 @@ PRV_SSCONFIG=~/.ss.json
 function prv_help ()
 {
 cat << EOF
-private script 
+private script
 
 Usage:
 
@@ -45,7 +45,7 @@ ledesdk="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2710/l
 #ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls'
 ledepkg='luci luci-ssl luci-theme-material luci-i18n-base-zh-cn kmod-usb-net-rtl8152 curl nano ip-full ipset iptables-mod-tproxy libev libpthread libpcre libmbedtls ChinaDNS dns-forwarder libsodium libudns luci-app-chinadns luci-app-dns-forwarder luci-app-shadowsocks-without-ipset luci-app-shadowsocks shadowsocks-libev-server shadowsocks-libev'
 ledesdk32="https://downloads.lede-project.org/snapshots/targets/brcm2708/bcm2708/lede-sdk-brcm2708-bcm2708_gcc-5.4.0_musl_eabi.Linux-x86_64.tar.xz"
-lededir=$(readlink -f .) 
+lededir=$(readlink -f .)
 }
 
 function lede_pgetimgbuilder ()
@@ -138,62 +138,62 @@ proxychains ./scripts/feeds update -a
 function lede_getsource()
 {
 #lede_getss
-# Ìí¼Ó feeds
+# ï¿½ï¿½ï¿½ï¿½ feeds
 git clone https://github.com/shadowsocks/openwrt-feeds.git package/feeds
-# »ñÈ¡ shadowsocks-libev Makefile
+# ï¿½ï¿½È¡ shadowsocks-libev Makefile
 git clone https://github.com/shadowsocks/openwrt-shadowsocks.git package/shadowsocks-libev
-# Ñ¡ÔñÒª±àÒëµÄ°ü Network -> shadowsocks-libev
+# Ñ¡ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä°ï¿½ Network -> shadowsocks-libev
 #make menuconfig
-# ¿ªÊ¼±àÒë
+# ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 #make package/shadowsocks-libev/compile V=99
 
 # lede_getchinadns
-# »ñÈ¡ Makefile
+# ï¿½ï¿½È¡ Makefile
 git clone https://github.com/aa65535/openwrt-chinadns.git package/chinadns
-# Ñ¡ÔñÒª±àÒëµÄ°ü Network -> ChinaDNS
+# Ñ¡ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä°ï¿½ Network -> ChinaDNS
 # make menuconfig
-# # ¿ªÊ¼±àÒë
+# # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 # make package/chinadns/compile V=99
 
 # lede_getDNS-forwarder
-# »ñÈ¡ Makefile
+# ï¿½ï¿½È¡ Makefile
 git clone https://github.com/aa65535/openwrt-dns-forwarder.git package/dns-forwarder
-# Ñ¡ÔñÒª±àÒëµÄ°ü Network -> dns-forwarder
+# Ñ¡ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä°ï¿½ Network -> dns-forwarder
 # make menuconfig
-# # ¿ªÊ¼±àÒë
+# # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 # make package/dns-forwarder/compile V=99
 
 # lede_getsimple-obfs
-# Ìí¼Ó feeds
+# ï¿½ï¿½ï¿½ï¿½ feeds
 git clone https://github.com/shadowsocks/openwrt-feeds.git package/feeds
-# »ñÈ¡ simple-obfs Makefile
+# ï¿½ï¿½È¡ simple-obfs Makefile
 git clone https://github.com/aa65535/openwrt-simple-obfs.git package/simple-obfs
-# # Ñ¡ÔñÒª±àÒëµÄ°ü Network -> simple-obfs
+# # Ñ¡ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä°ï¿½ Network -> simple-obfs
 # make menuconfig
-# # ¿ªÊ¼±àÒë
+# # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 # make package/simple-obfs/compile V=99
 
 # lede_getluci-app-shadowsocks
-# Clone ÏîÄ¿
+# Clone ï¿½ï¿½Ä¿
 git clone https://github.com/shadowsocks/luci-app-shadowsocks.git package/luci-app-shadowsocks
-# ±àÒë po2lmo (Èç¹ûÓÐpo2lmo¿ÉÌø¹ý)
+# ï¿½ï¿½ï¿½ï¿½ po2lmo (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½po2lmoï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 # pushd package/luci-app-shadowsocks/tools/po2lmo
 # make && sudo make install
 # popd
-# # Ñ¡ÔñÒª±àÒëµÄ°ü LuCI -> 3. Applications
+# # Ñ¡ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä°ï¿½ LuCI -> 3. Applications
 # make menuconfig
-# # ¿ªÊ¼±àÒë
+# # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 # make package/luci-app-shadowsocks/compile V=99
 
 # lede_getopenwrt-dist-luci
 git clone https://github.com/aa65535/openwrt-dist-luci.git package/openwrt-dist-luci
-# ±àÒë po2lmo (Èç¹ûÓÐpo2lmo¿ÉÌø¹ý)
+# ï¿½ï¿½ï¿½ï¿½ po2lmo (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½po2lmoï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 # pushd package/openwrt-dist-luci/tools/po2lmo
 # make && sudo make install
 # popd
-# # Ñ¡ÔñÒª±àÒëµÄ°ü LuCI -> 3. Applications
+# # Ñ¡ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä°ï¿½ LuCI -> 3. Applications
 # make menuconfig
-# # ¿ªÊ¼±àÒë
+# # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 # make package/openwrt-dist-luci/compile V=99
 }
 
@@ -313,7 +313,7 @@ EOF
 
 cat <<EOF > files/root/ss_watchdog.sh
 #!/bin/sh
- 
+
 LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
 wget --spider --quiet --tries=1 --timeout=10 https://www.facebook.com/
 if [ "$?" == "0" ]; then
@@ -347,14 +347,14 @@ fi
 EOF
 
 cat <<EOF > files/root/crontab
-# ÎÄ¼þ¸ñÊ½ËµÃ÷
-#  ¡ª¡ª·ÖÖÓ (0 - 59)
-# |  ¡ª¡ªÐ¡Ê± (0 - 23)
-# | |  ¡ª¡ªÈÕ   (1 - 31)
-# | | |  ¡ª¡ªÔÂ   (1 - 12)
-# | | | |  ¡ª¡ªÐÇÆÚ (0 - 7)£¨ÐÇÆÚÈÕ=0»ò7£©
+# ï¿½Ä¼ï¿½ï¿½ï¿½Ê½Ëµï¿½ï¿½
+#  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (0 - 59)
+# |  ï¿½ï¿½ï¿½ï¿½Ð¡Ê± (0 - 23)
+# | |  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½   (1 - 31)
+# | | |  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½   (1 - 12)
+# | | | |  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (0 - 7)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½=0ï¿½ï¿½7ï¿½ï¿½
 # | | | | |
-# * * * * * ±»Ö´ÐÐµÄÃüÁî
+# * * * * * ï¿½ï¿½Ö´ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½
 */10 * * * * /root/ss_watchdog.sh >> /var/log/ss_watchdog.log 2>&1
 0 1 * * 7 echo "" > /var/log/ss_watchdog.log
 30    4     *     *     *     /root/update_ignore_list.sh>/dev/null 2>&1
@@ -375,9 +375,9 @@ cp $ipkpkgdir/libsodium*.ipk packages
 }
 
 # insmod: error inserting 'wl.ko': -1 Unknown symbol in module
-# ¿´µ½Õâ¶Î£¬Ó¦¸ÃÊÇÄ£¿é¼ÓÔØÒÀÀµµÄÎÊÌâ
-# modinfo  ./wl.ko | grep depend   ÕÒÄ£¿éµÄÒÀÀµ£¬
-# modprobe ÕÒ³öµÄÒÀÀµ
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î£ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+# modinfo  ./wl.ko | grep depend   ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+# modprobe ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 # insmod ./wl.ko
 
 function lede_sdkpatche()
@@ -446,7 +446,7 @@ cat <<EOF
 -CONFIG_PLATFORM_ARM64 = n
 +CONFIG_PLATFORM_ARM64 = y
  ###############################################################
- 
+
  CONFIG_DRVEXT_MODULE = n
 EOF
 
@@ -456,12 +456,12 @@ cat <<EOF
 +++ b/package/kernel/rtl8812au/Makefile
 @@ -11,12 +11,12 @@ include $(INCLUDE_DIR)/kernel.mk
  include $(INCLUDE_DIR)/kernel-defaults.mk
- 
+
  PKG_NAME:=RTL8812A
 -PKG_VERSION=2016-10-20-$(PKG_SOURCE_VERSION)
 +PKG_VERSION=2016-10-26-$(PKG_SOURCE_VERSION)
  PKG_RELEASE:=1
- 
+
  PKG_SOURCE_PROTO:=git
 -PKG_SOURCE_URL:=https://github.com/weedy/rtl8812AU.git
 -PKG_SOURCE_VERSION:=a422338714853794b7cfb8ed7e2fcec355b4399d
@@ -469,9 +469,9 @@ cat <<EOF
 +PKG_SOURCE_VERSION:=845607043e532c26a196e96f837a449952a36c87
  PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_SOURCE_VERSION)
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.gz
- 
+
 @@ -36,7 +36,7 @@ endef
- 
+
  define Build/Compile
         $(MAKE) $(KERNEL_MAKEOPTS) M=$(PKG_BUILD_DIR) \
 -               USER_EXTRA_CFLAGS="-D_LINUX_BYTEORDER_SWAB_H -DCONFIG_BIG_ENDIAN -DCONFIG_IOCTL_CFG80211 -DRTW_USE_CFG80211_STA_EVENT" \
@@ -490,7 +490,7 @@ lede_dl
 function lede_8812set()
 {
 lede_gitdl12345="https://github.com/dl12345/rtl8812au.git"
-gtidl12345=$(readlink -f ./dl12345) 
+gtidl12345=$(readlink -f ./dl12345)
 lede_gitweedy="https://github.com/weedy/lede-rtl8812au-rtl8814au.git"
 gitweedy="weedy"
 }
@@ -558,10 +558,10 @@ make defconfig
 
 function db_instdocker()
 {
-if [ `id -u` -eq 0 ];then  
-    echo "root ! go on"  
-else  
-    echo "not root ! exit"  
+if [ `id -u` -eq 0 ];then
+    echo "root ! go on"
+else
+    echo "not root ! exit"
 	return -1
 fi
 apt-get remove docker docker-engine docker.io
@@ -572,7 +572,7 @@ apt-get install \
      curl \
      gnupg2 \
      software-properties-common
-	 
+
 curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 apt-key fingerprint 0EBFCD88
 add-apt-repository \
@@ -581,4 +581,9 @@ add-apt-repository \
    stable"
 apt-get update
 apt-get install docker-ce
+}
+
+function db_ulimit() {
+  #statements
+  echo 'ulimit -n 65535' >/etc/profile.d/ulimit.sh
 }
