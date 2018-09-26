@@ -587,3 +587,45 @@ function db_ulimit() {
   #statements
   echo 'ulimit -n 65535' >/etc/profile.d/ulimit.sh
 }
+
+function db_set_caddy() {
+  #https://github.com/mholt/caddy/tree/master/dist/init/linux-systemd
+  #cp /path/to/caddy /usr/local/bin
+  #chown root:root /usr/local/bin/caddy
+  #chmod 755 /usr/local/bin/caddy
+  setcap 'cap_net_bind_service=+ep' /usr/local/bin/caddy
+  mkdir /var/www
+  chown www-data:www-data /var/www
+  chmod 555 /var/www
+  cp -R example.com /var/www/
+  chown -R www-data:www-data /var/www/example.com
+  chmod -R 555 /var/www/example.com
+
+  wget https://raw.githubusercontent.com/mholt/caddy/master/dist/init/linux-systemd/caddy.service
+  cp caddy.service /etc/systemd/system/
+  chown root:root /etc/systemd/system/caddy.service
+  chmod 644 /etc/systemd/system/caddy.service
+
+cat << EOF > /etc/caddy/Caddyfile
+nas.sdmud.tk {
+    gzip
+    tls sdimud@gmail.com {
+    protocols tls1.0 tls1.2
+    }
+    proxy  / 10.0.0.2 {
+        websocket
+        transparent
+        insecure_skip_verify
+    }
+}
+EOF
+
+  systemctl daemon-reload
+  systemctl start caddy.service
+
+  systemctl enable caddy.service
+
+  #journalctl --boot -u caddy.service
+  #journalctl -f -u caddy.service
+  #setfacl -m user:www-data:r-- /etc/ssl/private/my.key
+}
