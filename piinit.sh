@@ -380,11 +380,11 @@ function makelink()
 }
 EOF
 
-sed -i 's/#!\/bin\/bash$/#!\/bin\/bash\/n\' \
-/usr/local/etc/nc-automount-links-mon
+#sed -i 's/#!\/bin\/bash$/#!\/bin\/bash\/n\' \
+#/usr/local/etc/nc-automount-links-mon
   test -e /usr/local/etc/nc-automount-links-mon.bak || \
   cp /usr/local/etc/nc-automount-links-mon /usr/local/etc/nc-automount-links-mon.bak
-  sed -i '/#!\/bin\/bash/{s/$/\n\n. \/usr\/local\/etc\/nc-automount-links-mon\.h\n\n/;:f;n;b f;}'
+  sed -i '/#!\/bin\/bash/{s/$/\n\n. \/usr\/local\/etc\/nc-automount-links-mon\.h\n\n/;:f;n;b f;}' \
   /usr/local/etc/nc-automount-links-mon
    sed -i 's/\([ \t]*\)\([^ \t]*nc-automount-links\)/\1#\2\n\1linkproc ${f%,*}/' \
   /usr/local/etc/nc-automount-links-mon
