@@ -447,7 +447,7 @@ After=network-online.target
 [Service]
 Type=simple
 Restart=always
-ExecStart=/usr/bin/frpc -c  /usr/local/frps/frpc.ini
+ExecStart=/usr/bin/frpc -c  /usr/local/frpc/frpc.ini
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=always
@@ -457,7 +457,8 @@ WantedBy=multi-user.target
 WantedBy=graphical.target
 EOF
 
-cat <<EOF > /usr/local/frps/frpc.ini
+mkdir -p /usr/local/frpc/
+cat <<EOF > /usr/local/frpc/frpc.ini
 # [common] is integral section
 [common]
 # A literal address or host name for IPv6 must be enclosed
@@ -501,27 +502,26 @@ remote_port = 9000
 
 #use_encryption = true
 #use_compression = true
-custom_domains = n9.sdmud.tk
+#custom_domains = n9.sdmud.tk
 
 [web]
-type =http
-local_ip = 192.168.1.130
+type = tcp
 local_port = 80
-custom_domains = n9.sdmud.tk
+remote_port = 9080
+#custom_domains = n9.sdmud.tk
 
 
 [web2]
-type =https
-local_ip = 192.168.1.130 
+type = tcp
 local_port = 443
-custom_domains = n9.sdmud.tk
+remote_port = 9443
 
 
 #[web3]
 #type =https
 #local_ip = 192.168.1.130 
 #local_port = 4443
-#custom_domains = n9.sdmud.tk
+
 EOF
 
 frptar='https://github.com/fatedier/frp/releases/download/v0.21.0/frp_0.21.0_linux_arm.tar.gz'
