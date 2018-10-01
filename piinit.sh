@@ -95,7 +95,8 @@ apt-get install -y -q nano \
      python-pip \
      udisks2 \
      bash-completion \
-     smartmontools
+     smartmontools \
+     jq
 }
 
 function picmd_installwebmin()
@@ -436,6 +437,17 @@ sysctl -p
 
 function pinc_getrealip(){
   dig +short myip.opendns.com @resolver1.opendns.com
+}
+
+function pinc_addtrust(){
+  pushd /var/www/nextcloud
+  sudo -u www-data php occ config:system:get \
+  trusted_domains --output=json_pretty 
+  sudo -u www-data php occ config:system:set \
+  trusted_domains 6 --value=nas.lan
+  sudo -u www-data php occ  config:system:set \
+  trusted_domains 7 --value=nas.sdmud.tk
+  popd
 }
 
 function pinc_joinfrp(){
