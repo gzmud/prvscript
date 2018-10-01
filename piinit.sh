@@ -450,7 +450,7 @@ function pinc_addtrust(){
   popd
 }
 
-function pinc_joinfrp(){
+function pinc_joinfrp(frptoken,frphost){
 cat <<EOF > /usr/lib/systemd/system/FRP-Client.service
 [Unit]
 Description=FRP-Client
@@ -460,7 +460,7 @@ After=network-online.target
 Type=simple
 Restart=always
 ExecStart=/usr/bin/frpc -c  /usr/local/frpc/frpc.ini
-ExecReload=/bin/kill -HUP $MAINPID
+ExecReload=/bin/kill -HUP \$MAINPID
 KillMode=process
 Restart=always
 
@@ -475,11 +475,11 @@ cat <<EOF > /usr/local/frpc/frpc.ini
 [common]
 # A literal address or host name for IPv6 must be enclosed
 # in square brackets, as in "[::1]:80", "[ipv6-host]:http" or "[ipv6-host%zone]:80"
-server_addr = n9.sdmud.tk
+server_addr = $frphost
 server_port = 5443
 
 # for authentication
-token = qwkEOJeG2VScFbOX
+token = $frptoken
 
 # connections will be established in advance, default value is zero
 pool_count = 5
@@ -504,35 +504,25 @@ log_max_days = 3
 # now it supports tcp and kcp, default is tcp
 protocol = tcp
 
-# Resolve your domain names to [server_addr] so you can use http://web01.yourdomain.com to browse web01 and http://web02.yourdomain.com to browse web02
 [webmin]
 type = tcp
 #local_ip = 192.168.1.130
 local_port = 10000
-
 remote_port = 9000
 
 #use_encryption = true
 #use_compression = true
-#custom_domains = n9.sdmud.tk
+#custom_domains = $frphost
 
-[web]
-type = tcp
-local_port = 80
-remote_port = 9080
-#custom_domains = n9.sdmud.tk
-
+#[web]
+#type = tcp
+#local_port = 80
+#remote_port = 9080
 
 [web2]
 type = tcp
 local_port = 443
 remote_port = 9443
-
-
-#[web3]
-#type =https
-#local_ip = 192.168.1.130 
-#local_port = 4443
 
 EOF
 
