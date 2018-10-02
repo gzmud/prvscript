@@ -93,7 +93,7 @@ apt-get install -y -q nano \
      curl \
      gnupg2 \
      python-pip \
-     udisks2 \
+     python3-pip \
      bash-completion \
      smartmontools \
      jq
@@ -450,7 +450,34 @@ function pinc_addtrust(){
   popd
 }
 
-function pinc_joinfrp(frptoken,frphost){
+function db_fixiptable(){
+cat <<EOF > /etc/systemd/system/fixiptable.service
+[Unit]
+Description=fixiptable
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/fixiptable.sh
+
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=graphical.target
+EOF
+cat <<EOF > /root/fixiptable.sh
+#!/bin/bash
+iptables -A INPUT -i eth0 -p tcp -m tcp --dport 9080 -j DROP
+iptables -A INPUT -i eth0 -p tcp -m tcp --dport 9443 -j DROP
+iptables -A INPUT -i eth0 -p tcp -m tcp --dport 9000 -j DROP
+EOF
+chmod +x /root/fixiptable.sh
+systemctl enable fixiptable.service
+}
+
+function pinc_joinfrp(){
+frptoken=$1
+frphost=$2
 cat <<EOF > /usr/lib/systemd/system/FRP-Client.service
 [Unit]
 Description=FRP-Client
