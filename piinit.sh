@@ -533,21 +533,21 @@ protocol = tcp
 
 [webmin]
 type = tcp
-#local_ip = 192.168.1.130
 local_port = 10000
 remote_port = 9000
 
-#use_encryption = true
-#use_compression = true
-#custom_domains = $frphost
-
-#[web]
-#type = tcp
-#local_port = 80
-#remote_port = 9080
+[webmin-u]
+type = udp
+local_port = 10000
+remote_port = 9000
 
 [web2]
 type = tcp
+local_port = 443
+remote_port = 9443
+
+[web2-u]
+type = udp
 local_port = 443
 remote_port = 9443
 
@@ -560,8 +560,10 @@ mkdir -p frp
 pushd frp
 wget $frptar
 tar xvf frp_0.21.0_linux_arm.tar.gz
+pushd frp_0.21.0_linux_arm
 cp frpc /usr/bin/
 chmod +xxx /usr/bin/frpc
+popd
 popd
 popd
 }
